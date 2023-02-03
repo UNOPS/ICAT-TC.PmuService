@@ -96,6 +96,7 @@ export class AuditService extends TypeOrmCrudService<Audit> {
         '(dr.userName LIKE :filterText OR dr.action LIKE :filterText OR dr.actionStatus LIKE :filterText OR dr.editedOn LIKE :filterText)';
     }
 
+    
     if (userTypeId != null && userTypeId != undefined && userTypeId != '') {
       if (filter) {
         filter = `${filter}  and dr.userType= :userTypeId`;

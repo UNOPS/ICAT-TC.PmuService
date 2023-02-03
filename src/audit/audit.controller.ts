@@ -55,10 +55,9 @@ export class AuditController implements CrudController<Audit> {
         @Query('filterText') filterText: string,
         @Query('institutionId') institutionId:number
         
-      ): Promise<any> {
-        
+      ): Promise<any> { 
        //let editedOnnew= moment(editedOn, "DD/MM/YYYY");
-       
+    
        var timestamp = Date.parse(editedOn);
       var dateObject = new Date(timestamp);
       

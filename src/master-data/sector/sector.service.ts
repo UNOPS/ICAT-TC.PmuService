@@ -4,7 +4,8 @@ import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { SubSector } from '../sub-sector/entity/sub-sector.entity';
 import { Sector } from './sector.entity';
-
+import {SectorIndicator} from 'src/master-data/indicator/entities/sector-indicator.entity';
+import {Indicator} from 'src/master-data/indicator/entities/indicator.entity'
 
 @Injectable()
 export class SectorService extends TypeOrmCrudService<Sector> {
@@ -75,6 +76,34 @@ export class SectorService extends TypeOrmCrudService<Sector> {
     }
   }
 
+
+  async getSector(sectorId: number) {
+    let data;
+    if (sectorId != 0) {
+      data = this.repo.createQueryBuilder('sec')
+        .leftJoinAndMapMany(
+          'sec.sectorindicator',
+          SectorIndicator,
+          'cs',
+          `sec.id = cs.sector `,
+
+        ).leftJoinAndMapOne(
+          'cs.indicator',
+          Indicator,
+          'ind',
+          `ind.id = cs.indicator`
+        )
+
+        .where(
+          `sec.id = ${sectorId}`
+        )
+
+      
+    }else{}
+    return data.getOne();
+
+    
+}
 
 
 }
