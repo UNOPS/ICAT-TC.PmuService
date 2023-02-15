@@ -6,6 +6,7 @@ import { Sector } from "src/master-data/sector/sector.entity";
 import { BaseTrackingEntity } from "src/shared/entities/base.tracking.entity";
 import { Column, Entity, Generated, JoinColumn, JoinTable, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Active } from "./active.entity";
+import { Indicator } from 'src/master-data/indicator/entities/indicator.entity';
 
 @Entity({ name: 'methodology' })
 export class Methodology extends BaseTrackingEntity {
@@ -65,7 +66,11 @@ export class Methodology extends BaseTrackingEntity {
 
   @ManyToOne((type) => Sector, { cascade: false })
   @JoinColumn({ name: 'sectorId' })
-  sector?: Sector;
+  sector?: Sector; 
+
+  @ManyToOne((type) => Indicator, { cascade: false })
+  @JoinColumn({ name: 'indicatorId' })
+  indicator?: Indicator;
 
   @ManyToOne((type) => MitigationActionType, { cascade: false })
   @JoinColumn({ name: 'mitigationActionTypeId' })
@@ -78,6 +83,5 @@ export class Methodology extends BaseTrackingEntity {
   @ManyToOne((type) => MethodologyData, { cascade: false })
   @JoinColumn({ name: 'methodId' })
   method?: MethodologyData;
-
 
 }

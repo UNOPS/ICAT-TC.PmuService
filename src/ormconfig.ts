@@ -30,12 +30,10 @@ const config: ConnectionOptions = {
   //database: 'nccdsndb',
 //  username: 'root',
 //  password: 'pradeep123#',
-  database: 'icat_pmu2',
+  database: 'icat',
 
    username: 'sqluser',
    password: 'password',
-
-
 
 
   
@@ -44,9 +42,10 @@ const config: ConnectionOptions = {
   // We are using migrations, synchronize should be set to false.
   synchronize: false ,
 
+
   // Run migrations automatically,
   // you can disable this if you prefer running migration manually.
-  migrationsRun: false,
+  migrationsRun: true,
   logging: true,
   logger: 'file',
 

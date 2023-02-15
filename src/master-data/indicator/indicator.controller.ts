@@ -17,10 +17,7 @@ export class IndicatorController {
     return this.indicatorService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.indicatorService.findOne(+id);
-  }
+
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateIndicatorDto: UpdateIndicatorDto) {

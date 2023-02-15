@@ -1,20 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { CreateIndicatorDto } from './dto/create-indicator.dto';
 import { UpdateIndicatorDto } from './dto/update-indicator.dto';
+import {Indicator} from 'src/master-data/indicator/entities/indicator.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 
 @Injectable()
-export class IndicatorService {
+export class IndicatorService  extends TypeOrmCrudService <Indicator>  {
+
+  constructor( @InjectRepository(Indicator) repo,){
+    super(repo)
+   }
+
+
   create(createIndicatorDto: CreateIndicatorDto) {
     return 'This action adds a new indicator';
   }
-
-  findAll() {
-    return `This action returns all indicator`;
+  findAll(): Promise<Indicator[]> {
+    return this.repo.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} indicator`;
-  }
 
   update(id: number, updateIndicatorDto: UpdateIndicatorDto) {
     return `This action updates a #${id} indicator`;

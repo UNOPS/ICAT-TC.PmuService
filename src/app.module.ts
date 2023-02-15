@@ -9,6 +9,7 @@ import { Ndc } from './master-data/ndc/ndc.entity';
 import { SubNdc } from './master-data/ndc/sub-ndc.entity';
 import { ProjectStatus } from './master-data/project-status/project-status.entity';
 import { Sector } from './master-data/sector/sector.entity';
+import { Indicator } from './master-data/indicator/entities/indicator.entity';
 import { SubSector } from './master-data/sub-sector/entity/sub-sector.entity'
 import { Project } from './project/entity/project.entity';
 import { NdcModule } from './master-data/ndc/ndc.module';
@@ -80,6 +81,7 @@ import { IndicatorModule } from './master-data/indicator/indicator.module';
       Country,
       NdcSet,
       EmissionReductioDraftDataEntity,
+      Indicator
     ]),
 
     ProjectModule,
@@ -96,6 +98,7 @@ import { IndicatorModule } from './master-data/indicator/indicator.module';
     AuthModule,
     UsersModule,
     InstitutionModule,
+    IndicatorModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '../static-files'),
       renderPath: 'icatcountryportal',
