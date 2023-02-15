@@ -54,6 +54,7 @@
     "rxjs": "^7.4.0",
     "typeorm": "^0.2.40",
     "typeorm-next": "^1.0.0",
+
     "uuid": "^8.3.2"
   },
   "devDependencies": {

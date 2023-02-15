@@ -25,6 +25,9 @@ import { MethodologyService } from './methodology.service';
         method: {
           eager: true,
         },
+        indicator: {
+          eager: true,
+        },
     },
 },
 })
@@ -39,14 +42,14 @@ export class MethodologyController implements CrudController<Methodology>{
 
       
   @Get(
-    'methodology/methodologyinfo/:page/:limit/:sectorId/:filterText/:developedBy',
+    'methodology/methodologyinfo/:page/:limit/:indicatorId/:filterText/:developedBy',
   )
   async getMethoDetails(
     @Request() request,
     @Query('page') page: number,
     @Query('limit') limit: number,
     @Query('filterText') filterText: string,
-    @Query('sectorId') sectorId:number,
+    @Query('indicatorId') indicatorId:number,
     @Query('developedBy') developedBy:string,
   ): Promise<any>{
     return await this.service.getMethodologyDetails(
@@ -55,7 +58,7 @@ export class MethodologyController implements CrudController<Methodology>{
         page: page,
       },
       filterText,
-      sectorId,
+      indicatorId,
       developedBy,
     );
   }
