@@ -1,4 +1,6 @@
 import { Country } from "src/country/entity/country.entity";
+import { Indicator } from "src/indicator/indicator.entity";
+import { Institution } from "src/institution/institution.entity";
 import { ApplicabilityEntity } from "src/master-data/applicability/applicability.entity";
 import { MethodologyData } from "src/master-data/methodology-data/methodology-data.entity";
 import { MitigationActionType } from "src/master-data/mitigation-action/mitigation-action.entity";
@@ -62,6 +64,13 @@ export class Methodology extends BaseTrackingEntity {
   @ManyToOne((type) => Country, { cascade: false })
   @JoinColumn({ name: 'countryId' })
   country?: Country;
+
+  @ManyToOne((type) => Indicator, { eager: true })
+  @JoinColumn()
+  indicator?: Indicator;
+  // @ManyToOne((type) => Institution, { eager: true })
+  // @JoinColumn()
+  // institution?: Institution;
 
   @ManyToOne((type) => Sector, { cascade: false })
   @JoinColumn({ name: 'sectorId' })
