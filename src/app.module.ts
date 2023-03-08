@@ -60,6 +60,8 @@ import { ApplicabilityModule } from './master-data/applicability/applicability.m
 import { ApplicabilityController } from './master-data/applicability/applicability.controller';
 import { MethodologyDataModule } from './master-data/methodology-data/methodology-data.module';
 import { MethodologyDataController } from './master-data/methodology-data/methodology-data.controller';
+import { IndicatorController } from './indicator/indicator.controller';
+import { IndicatorModule } from './indicator/indicator.module';
 
 
 @Module({
@@ -132,6 +134,7 @@ import { MethodologyDataController } from './master-data/methodology-data/method
     LearningMaterialModule,
     SubSectorModule,
     ReportModule,
+    IndicatorModule,
  
   ],
   controllers: [
@@ -147,6 +150,8 @@ import { MethodologyDataController } from './master-data/methodology-data/method
     ReportController,
 
     ApplicabilityController,
+
+    IndicatorController,
     // InstitutionCategoryController,
     // UserController,
   ],
