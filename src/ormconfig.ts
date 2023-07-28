@@ -25,7 +25,7 @@ const config: ConnectionOptions = {
   host: 'localhost',
   port: 3306,
   username: 'root',
-  password: 'TCtool23#',
+  password: 'TCtool123#',
   database: 'pmu',
 
 
@@ -36,7 +36,7 @@ const config: ConnectionOptions = {
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
 
   // We are using migrations, synchronize should be set to false.
-  synchronize: true,
+  synchronize: false,
 
   // Run migrations automatically,
   // you can disable this if you prefer running migration manually.
