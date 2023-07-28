@@ -21,6 +21,9 @@ import { MethodologyDataService } from "./methodology-data.service";
           sector: {
             eager: true,
           },
+          indicator: {
+            eager: true,
+          },
       },
   },
   })

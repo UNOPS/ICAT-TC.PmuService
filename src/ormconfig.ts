@@ -35,7 +35,6 @@ const config: ConnectionOptions = {
 
 
 
-
   
   entities: [__dirname + '/**/*.entity{.ts,.js}'], 
 
