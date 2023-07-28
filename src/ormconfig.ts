@@ -24,19 +24,16 @@ const config: ConnectionOptions = {
   type: 'mysql',
   host: 'localhost',
   port: 3306,
-  // username: 'root',
-  // password: '12345',
-
-  //database: 'nccdsndb',
   username: 'root',
-  password: 'pradeep123#',
-  database: 'tc_pmu',
+  password: 'TCtool23#',
+  database: 'pmu',
 
 
 
 
-  
-  entities: [__dirname + '/**/*.entity{.ts,.js}'], 
+
+
+  entities: [__dirname + '/**/*.entity{.ts,.js}'],
 
   // We are using migrations, synchronize should be set to false.
   synchronize: true,
