@@ -93,6 +93,14 @@ export class SectorController implements CrudController<Sector> {
   }
 
 
+  @Get('sector1')
+  async getSector(
+    @Query('sectorId') sectorId: number,
+  ): Promise<any> {
+    return await this.service.getSector(sectorId);
+  }
+
+
   @UseGuards(JwtAuthGuard)
   @Override()
   async createOne(

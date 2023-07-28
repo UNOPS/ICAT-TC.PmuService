@@ -1,8 +1,10 @@
 import { CountrySector } from 'src/country/entity/country-sector.entity';
+import { SectorIndicator } from 'src/master-data/indicator/entities/sector-indicator.entity'
 import { Country } from 'src/country/entity/country.entity';
 import { LearningMaterialSector } from 'src/learning-material/entity/learning-material-sector.entity';
 import { Methodology } from 'src/methodology/entity/methodology.entity';
 import { BaseTrackingEntity } from 'src/shared/entities/base.tracking.entity';
+import { Indicator } from 'src/master-data/indicator/entities/indicator.entity';
 import {
   Entity,
   ManyToMany,
@@ -35,8 +37,12 @@ export class Sector extends BaseTrackingEntity {
   country: Country;
 */
 
+
 @OneToMany(() => CountrySector, countrySector => countrySector.sector)
 public countrysector!: CountrySector[];
+
+@OneToMany(() => SectorIndicator, sectorindicator => sectorindicator.sector)
+public sectorindicator!: SectorIndicator[];
 
   @OneToMany(() => LearningMaterialSector,(learningMaterialSector) => learningMaterialSector.sector)
   public learningMaterialsector!: LearningMaterialSector[];
@@ -52,4 +58,13 @@ public countrysector!: CountrySector[];
 
   @Column({ default: null })
   uniqueIdentification: string;
+
+
+  @ManyToMany(type => Indicator, indicator => indicator.sectors)
+  @JoinTable({
+    name: 'sector_indicator',
+    joinColumns: [{ name: 'sectorId' }],
+    inverseJoinColumns: [{ name: 'indicatorId' }]
+  })
+  indicators: Indicator[];
 }
