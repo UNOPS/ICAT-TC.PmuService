@@ -23,6 +23,7 @@ export class CountrySector extends BaseTrackingEntity {
 
     @Column("countryId")
     countryId:number;
+    
     @Column("sectorId")
     sectorId:number;
 

@@ -9,6 +9,7 @@ import { Ndc } from './master-data/ndc/ndc.entity';
 import { SubNdc } from './master-data/ndc/sub-ndc.entity';
 import { ProjectStatus } from './master-data/project-status/project-status.entity';
 import { Sector } from './master-data/sector/sector.entity';
+import { Indicator } from './master-data/indicator/entities/indicator.entity';
 import { SubSector } from './master-data/sub-sector/entity/sub-sector.entity'
 import { Project } from './project/entity/project.entity';
 import { NdcModule } from './master-data/ndc/ndc.module';
@@ -60,6 +61,7 @@ import { ApplicabilityModule } from './master-data/applicability/applicability.m
 import { ApplicabilityController } from './master-data/applicability/applicability.controller';
 import { MethodologyDataModule } from './master-data/methodology-data/methodology-data.module';
 import { MethodologyDataController } from './master-data/methodology-data/methodology-data.controller';
+import { IndicatorModule } from './master-data/indicator/indicator.module';
 
 
 @Module({
@@ -79,6 +81,7 @@ import { MethodologyDataController } from './master-data/methodology-data/method
       Country,
       NdcSet,
       EmissionReductioDraftDataEntity,
+      Indicator
     ]),
 
     ProjectModule,
@@ -95,6 +98,7 @@ import { MethodologyDataController } from './master-data/methodology-data/method
     AuthModule,
     UsersModule,
     InstitutionModule,
+    IndicatorModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '../static-files'),
       renderPath: 'icatcountryportal',
@@ -132,6 +136,7 @@ import { MethodologyDataController } from './master-data/methodology-data/method
     LearningMaterialModule,
     SubSectorModule,
     ReportModule,
+    IndicatorModule,
  
   ],
   controllers: [
