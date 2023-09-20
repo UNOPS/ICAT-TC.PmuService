@@ -219,7 +219,6 @@ export class UsersService extends TypeOrmCrudService<User> {
   async validateUser(userName: string, password: string): Promise<boolean> {
     const user = await this.usersRepository.findOne({ username: userName });
 
-    console.log(user);
 
     return (await user).validatePassword(password);
   }

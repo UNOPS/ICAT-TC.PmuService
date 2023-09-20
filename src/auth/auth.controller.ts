@@ -19,7 +19,7 @@ import axios from 'axios';
 
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
-const auditlogURL = 'http://localhost:7000/audit';
+// const auditlogURL = 'http://localhost:7000/audit';
 
 @Controller('auth')
 export class AuthController {
@@ -51,11 +51,6 @@ export class AuthController {
     where: { email: this.username },
   });
 
-  console.log("userrrr : ")
-  console.log(user)
-  
-  console.log("userTypeeeeeee : ")
- // console.log(user.institution.name)
 
   /*    let audit: AuditDto = new AuditDto();
     audit.action =  authCredentialDto.username +" Is Logged";
@@ -73,9 +68,9 @@ export class AuthController {
        institutionId : user.institution.id,
      }
     
-    const response = await axios.post(auditlogURL, this.audit2);
+    // const response = await axios.post(auditlogURL, this.audit2);
   //  this.auditService.create(audit);
-    console.log("audit2.......",response);
+    // console.log("audit2.......",response);
 
     
 
