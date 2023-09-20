@@ -83,7 +83,7 @@ export class InstitutionService extends TypeOrmCrudService<Institution> {
 
       let data = this.repo
         .createQueryBuilder('ins')
-        .innerJoinAndMapMany('ins.countries', Country, 'con', 'ins.id = con.institutionId')//country = table name
+        .leftJoinAndMapMany('ins.countries', Country, 'con', 'ins.id = con.institutionId')//country = table name
 
         //.leftJoinAndMapOne('ins.category', InstitutionCategory, 'cate', 'cate.id = ins.categoryId')
         .leftJoinAndMapOne('ins.type', InstitutionType, 'type', 'type.id = ins.typeId')
@@ -97,16 +97,16 @@ export class InstitutionService extends TypeOrmCrudService<Institution> {
 
         })
         .orderBy('ins.status', 'ASC')
-      // .groupBy('ins.id')
-      let resualt = await paginate(data, options);
+      .groupBy('ins.id')
+      let result = await paginate(data, options);
 
-      if (resualt) {
+      if (result) {
 
-        if (resualt.meta.totalItems != resualt.meta.itemCount) {
-          resualt.meta.totalItems = resualt.meta.itemCount
-        }
-        console.log('resula', resualt)
-        return resualt;
+        // if (result.meta.totalItems != result.meta.itemCount) {
+        //   result.meta.totalItems = result.meta.itemCount
+        // }
+        // console.log('resula', result)
+        return result;
       }
 
     }
