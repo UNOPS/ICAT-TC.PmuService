@@ -35,140 +35,148 @@ export class InstitutionService extends TypeOrmCrudService<Institution> {
   async getInstitutionDetails(
     options: IPaginationOptions,
     filterText: string,
-    countryId:number
-  ): Promise<Pagination<Institution>>{
+    countryId: number
+  ): Promise<Pagination<Institution>> {
     let filter: string = '';
 
-    if(filterText != null && filterText != undefined && filterText != ''){
-      filter = 
-      '(ins.name LIKE :filterText OR ins.address LIKE :filterText OR type.name LIKE :filterText OR user.firstName LIKE :filterText OR user.lastName LIKE :filterText OR con.name LIKE :filterText)';
-     
+    if (filterText != null && filterText != undefined && filterText != '') {
+      filter =
+        '(ins.name LIKE :filterText OR ins.address LIKE :filterText OR type.name LIKE :filterText OR user.firstName LIKE :filterText OR user.lastName LIKE :filterText OR con.name LIKE :filterText)';
+
     }
- 
-    
+
+
     if (countryId != 0) {
-      console.log("tttt",countryId)
+      console.log("tttt", countryId)
       if (filter) {
         console.log("GGGGGGGG")
-       // filter = `${filter}  and con.id = :countryId`;//institution has many countries
+        // filter = `${filter}  and con.id = :countryId`;//institution has many countries
         filter = `con.id  = :countryId`;
-       // console.log("Inside the FILTER",filter)
+        // console.log("Inside the FILTER",filter)
       } else {
         filter = `con.id  = :countryId`;
       }
       let data = this.repo
-      .createQueryBuilder('ins')
-       .innerJoinAndMapMany('ins.countries', Country, 'con', 'ins.id = con.institutionId')//country = table name
-    
-      //.leftJoinAndMapOne('ins.category', InstitutionCategory, 'cate', 'cate.id = ins.categoryId')
-      .leftJoinAndMapOne('ins.type', InstitutionType, 'type', 'type.id = ins.typeId')
-      //for this condition only  one user can have for institution
-     .leftJoinAndMapMany('ins.user', User, 'user', 'ins.id = user.institutionId and( user.userTypeId = 1 or user.userTypeId = 4)')
-    // .leftJoinAndMapOne('ins.user', User, 'user')
-      .leftJoinAndMapOne('user.userType', UserType, 'userType', 'userType.id =user.userTypeId')//userType.id 
-      
-      .where(filter, {
-        filterText: `%${filterText}%`,
-        countryId
-      })
-      .orderBy('ins.status', 'ASC')
+        .createQueryBuilder('ins')
+        .innerJoinAndMapMany('ins.countries', Country, 'con', 'ins.id = con.institutionId')//country = table name
+
+        //.leftJoinAndMapOne('ins.category', InstitutionCategory, 'cate', 'cate.id = ins.categoryId')
+        .leftJoinAndMapOne('ins.type', InstitutionType, 'type', 'type.id = ins.typeId')
+        //for this condition only  one user can have for institution
+        .leftJoinAndMapMany('ins.user', User, 'user', 'ins.id = user.institutionId and( user.userTypeId = 1 or user.userTypeId = 4)')
+        // .leftJoinAndMapOne('ins.user', User, 'user')
+        .leftJoinAndMapOne('user.userType', UserType, 'userType', 'userType.id =user.userTypeId')//userType.id 
+
+        .where(filter, {
+          filterText: `%${filterText}%`,
+          countryId
+        })
+        .orderBy('ins.status', 'ASC')
       let resualt = await paginate(data, options);
 
-      if(resualt){
-       console.log('resula',resualt.items[5])
+      if (resualt) {
+        console.log('resula', resualt.items[5])
         return resualt;
       }
 
-    }else{
+    } else {
 
       let data = this.repo
-      .createQueryBuilder('ins')
-      .leftJoinAndMapMany('ins.countries', Country, 'con', 'ins.id = con.institutionId')//country = table name
-    
-      //.leftJoinAndMapOne('ins.category', InstitutionCategory, 'cate', 'cate.id = ins.categoryId')
-      .leftJoinAndMapOne('ins.type', InstitutionType, 'type', 'type.id = ins.typeId')
-      //for this condition only  one user can have for institution
-     .leftJoinAndMapMany('ins.user', User, 'user', 'ins.id = user.institutionId and( user.userTypeId = 1 or user.userTypeId = 4)')
-    // .leftJoinAndMapOne('ins.user', User, 'user')
-      .leftJoinAndMapOne('user.userType', UserType, 'userType', 'userType.id =user.userTypeId')//userType.id 
-      
-      .where(filter, {
-        filterText: `%${filterText}%`,
-        
-      })
-      .orderBy('ins.status', 'ASC')
+        .createQueryBuilder('ins')
+        .innerJoinAndMapMany('ins.countries', Country, 'con', 'ins.id = con.institutionId')//country = table name
+
+        //.leftJoinAndMapOne('ins.category', InstitutionCategory, 'cate', 'cate.id = ins.categoryId')
+        .leftJoinAndMapOne('ins.type', InstitutionType, 'type', 'type.id = ins.typeId')
+        //for this condition only  one user can have for institution
+        .leftJoinAndMapMany('ins.user', User, 'user', 'ins.id = user.institutionId and( user.userTypeId = 1 or user.userTypeId = 4)')
+        // .leftJoinAndMapOne('ins.user', User, 'user')
+        .leftJoinAndMapOne('user.userType', UserType, 'userType', 'userType.id =user.userTypeId')//userType.id 
+
+        .where(filter, {
+          filterText: `%${filterText}%`,
+
+        })
+        .orderBy('ins.status', 'ASC')
+      // .groupBy('ins.id')
       let resualt = await paginate(data, options);
 
-      if(resualt){
-       console.log('resula',resualt.items[5])
+      if (resualt) {
+
+        if (resualt.meta.totalItems != resualt.meta.itemCount) {
+          resualt.meta.totalItems = resualt.meta.itemCount
+        }
+        console.log('resula', resualt)
         return resualt;
       }
 
     }
 
+  }
 
- 
-      //  console.log('data........',data)
-      
+  async getInstitution(insId: number) {
+    let data = this.repo
+      .createQueryBuilder('ins')
+      .leftJoinAndMapMany('ins.countries', Country, 'con', 'ins.id = con.institutionId')
+      .leftJoinAndMapOne('ins.type', InstitutionType, 'type', 'type.id = ins.typeId')
+      .where(  `ins.id = ${insId}`
+      );
 
-   // console.log('query',data.getQuery());
-
-       
+      return data.getOne();
   }
 
 
   async getPmuAdminAssignInstitution(
     options: IPaginationOptions,
-   
-  
-  ): Promise<Pagination<Institution>>{
+
+
+  ): Promise<Pagination<Institution>> {
     let filter: string = '';
 
     if (filter) {
       console.log("GGGGGGGG")
       filter = `con.id  = :countryId`;
-     // console.log("Inside the FILTER",filter)
+      // console.log("Inside the FILTER",filter)
     } else {
       filter = `user.institutionId IS NULL and user.userTypeId = 1`;
     }
 
 
     let data = this.repo
-        .createQueryBuilder('ins')
-        .leftJoinAndMapMany('ins.countries', Country, 'con', 'ins.id = con.institutionId')//country = table name
+      .createQueryBuilder('ins')
+      .leftJoinAndMapMany('ins.countries', Country, 'con', 'ins.id = con.institutionId')//country = table name
 
-        //.leftJoinAndMapOne('ins.category', InstitutionCategory, 'cate', 'cate.id = ins.categoryId')
-        .leftJoinAndMapOne('ins.type', InstitutionType, 'type', 'type.id = ins.typeId')
-       .leftJoinAndMapMany('ins.user', User, 'user', 'ins.id = user.institutionId')
+      //.leftJoinAndMapOne('ins.category', InstitutionCategory, 'cate', 'cate.id = ins.categoryId')
+      .leftJoinAndMapOne('ins.type', InstitutionType, 'type', 'type.id = ins.typeId')
+      .leftJoinAndMapMany('ins.user', User, 'user', 'ins.id = user.institutionId')
       // .leftJoinAndMapOne('ins.user', User, 'user')
-        .leftJoinAndMapOne('user.userType', UserType, 'userType', 'userType.id =user.userTypeId')//userType.id 
-             
+      .leftJoinAndMapOne('user.userType', UserType, 'userType', 'userType.id =user.userTypeId')//userType.id 
 
-        .where(filter, {
-          
-        })
-        .orderBy('ins.status', 'ASC')
-      //  console.log('data........',data)
-      
 
-   // console.log('query',data.getQuery());
+      .where(filter, {
 
-        let resualt = await paginate(data, options);
+      })
+      .orderBy('ins.status', 'ASC')
+    //  console.log('data........',data)
 
-        if(resualt){
-         console.log('pmuassignins====',resualt)
-          return resualt;
-        }
+
+    // console.log('query',data.getQuery());
+
+    let resualt = await paginate(data, options);
+
+    if (resualt) {
+      console.log('pmuassignins====', resualt)
+      return resualt;
+    }
   }
 
-  
 
 
 
-  
 
 
-  
 
-  
+
+
+
+
 }
