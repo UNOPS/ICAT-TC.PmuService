@@ -15,7 +15,7 @@ import { InstitutionService } from './institution.service';
 import { basename } from 'path';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
-import {Country} from 'src/country/entity/country.entity'
+import { Country } from 'src/country/entity/country.entity'
 import { Repository } from 'typeorm';
 import { request } from 'http';
 import { retry } from 'rxjs';
@@ -30,7 +30,7 @@ import { REQUEST } from '@nestjs/core';
   },
   query: {
     join: {
-      
+
       province: {
         eager: true,
       },
@@ -52,7 +52,7 @@ import { REQUEST } from '@nestjs/core';
       countries: {
         eager: true,
       },
-   
+
     },
   },
 })
@@ -64,12 +64,12 @@ export class InstitutionController implements CrudController<Institution> {
     private readonly usersRepository: Repository<User>,
 
     @InjectRepository(Country)
-    private readonly countryRepo:Repository<Country>,
+    private readonly countryRepo: Repository<Country>,
 
     private readonly auditService: AuditService,
     @Inject(REQUEST) private request,
 
-  ) {}
+  ) { }
 
 
   get base(): CrudController<Institution> {
@@ -85,7 +85,7 @@ export class InstitutionController implements CrudController<Institution> {
     @Query('limit') limit: number,
     @Query('filterText') filterText: string,
     @Query('countryId') countryId: number,
-  ): Promise<any>{
+  ): Promise<any> {
     return await this.service.getInstitutionDetails(
       {
         limit: limit,
@@ -97,22 +97,34 @@ export class InstitutionController implements CrudController<Institution> {
     )
 
   }
+  @Get(
+    'institution/institutiId',
+  )
+  async getInstitutionDetails(
+    @Request() request,
+    @Query('countryId') insId: number,
+  ): Promise<any> {
+    return await this.service.getInstitution(
+      insId
+    )
+
+  }
 
 
-  
+
   @Get(
     'institution/institutioninfopmu',
   )
   async getPmuAdminAssignInstitution(
     @Request() request,
-  
-  ): Promise<any>{
+
+  ): Promise<any> {
     return await this.service.getPmuAdminAssignInstitution(
       {
         limit: 10,
         page: 1,
       },
-      
+
 
     )
 
@@ -123,7 +135,7 @@ export class InstitutionController implements CrudController<Institution> {
   @Get('deactivateInstituion')
   async deactivateInstitution(
     @Query('instiId') instiId: number,
-  ): Promise<any>{
+  ): Promise<any> {
     return await this.service.softDelete(instiId);
   }
 
@@ -131,22 +143,22 @@ export class InstitutionController implements CrudController<Institution> {
   @Override()
   async createOne(
     @Request() request,
-    @ParsedRequest() req:CrudRequest,
+    @ParsedRequest() req: CrudRequest,
     @ParsedBody() dto: Institution,
-  ):Promise<Institution>{
+  ): Promise<Institution> {
 
     let institution = await this.base.createOneBase(req, dto);
 
-    console.log("creted ins ---",institution)
+    console.log("creted ins ---", institution)
 
     let audit: AuditDto = new AuditDto();
-    audit.action = institution.name+ " Institution created";
+    audit.action = institution.name + " Institution created";
     audit.comment = "Institution Created";
     audit.actionStatus = 'Created';
     this.auditService.create(audit);
-    console.log("audit.......",audit);
+    console.log("audit.......", audit);
 
-    dto.countries.map((a) =>{
+    dto.countries.map((a) => {
 
       let insttemp = new Institution();
       insttemp.id = institution.id;
@@ -168,22 +180,29 @@ export class InstitutionController implements CrudController<Institution> {
   @UseGuards(JwtAuthGuard)
   async updateOne(
     @Request() request,
-    @ParsedRequest() req:CrudRequest,
+    @ParsedRequest() req: CrudRequest,
     @ParsedBody() dto: Institution,
-  ):Promise<Institution>{
+  ): Promise<Institution> {
 
+
+    let institution = await this.base.updateOneBase(req, dto);
+    let oldcountry = (await this.service.getInstitution(dto.id));
+    let newco= new Array();
+    let oldco= new Array();
+    for (let n of dto.countries) {
+      newco.push(n.id)
+    }
   
-        let institution = await this.base.updateOneBase(req, dto);
-       
-        let audit: AuditDto = new AuditDto();
-        audit.action = institution.name+ " Institution Updated";
-        audit.comment = "Institution Updated";
-        audit.actionStatus = 'Updated';
-        
-        await this.auditService.create(audit);
-        console.log("audit.......",audit);
 
-        return institution;
+    let audit: AuditDto = new AuditDto();
+    audit.action = institution.name + " Institution Updated";
+    audit.comment = "Institution Updated";
+    audit.actionStatus = 'Updated';
+
+    await this.auditService.create(audit);
+    console.log("audit.......", audit);
+
+    return institution;
 
   }
 
