@@ -89,7 +89,7 @@ export class Country extends BaseTrackingEntity{
   //new added
   @ManyToOne((type) => Institution, { eager: true })
   @JoinColumn()
-  institution?: Institution;
+  institution?: Institution |null;
 
 
   @Column({ default: null })
