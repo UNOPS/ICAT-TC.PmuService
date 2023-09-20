@@ -97,7 +97,7 @@ export class InstitutionService extends TypeOrmCrudService<Institution> {
 
         })
         .orderBy('ins.status', 'ASC')
-      .groupBy('ins.id')
+      // .groupBy('ins.id')
       let result = await paginate(data, options);
 
       if (result) {
