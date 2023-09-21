@@ -36,7 +36,7 @@ export class InstitutionService extends TypeOrmCrudService<Institution> {
     options: IPaginationOptions,
     filterText: string,
     countryId: number
-  ): Promise<Pagination<Institution>> {
+    ): Promise<any> {
     let filter: string = '';
 
     if (filterText != null && filterText != undefined && filterText != '') {
@@ -81,36 +81,66 @@ export class InstitutionService extends TypeOrmCrudService<Institution> {
 
     } else {
 
-      let data = this.repo
+      const data = this.repo
         .createQueryBuilder('ins')
-        .leftJoinAndMapMany('ins.countries', Country, 'con', 'ins.id = con.institutionId')//country = table name
+        .leftJoinAndMapOne(
+          'ins.type',
+          InstitutionType,
+          'type',
+          'type.id = ins.typeId',
+        )
+        .where(filter, {})
+        .orderBy('ins.id', 'ASC');
+      const result1 = await paginate(data, options);
 
-        //.leftJoinAndMapOne('ins.category', InstitutionCategory, 'cate', 'cate.id = ins.categoryId')
-        .leftJoinAndMapOne('ins.type', InstitutionType, 'type', 'type.id = ins.typeId')
-        //for this condition only  one user can have for institution
-        .leftJoinAndMapMany('ins.user', User, 'user', 'ins.id = user.institutionId and( user.userTypeId = 1 or user.userTypeId = 4)')
-        // .leftJoinAndMapOne('ins.user', User, 'user')
-        .leftJoinAndMapOne('user.userType', UserType, 'userType', 'userType.id =user.userTypeId')//userType.id 
-
-        .where(filter, {
-          filterText: `%${filterText}%`,
-
-        })
-        .orderBy('ins.status', 'ASC')
-      // .groupBy('ins.id')
-      let result = await paginate(data, options);
-
-      if (result) {
-
-        // if (result.meta.totalItems != result.meta.itemCount) {
-        //   result.meta.totalItems = result.meta.itemCount
-        // }
-        // console.log('resula', result)
-        return result;
+      let newarray = new Array();
+      for (let ins of result1.items) {
+        newarray.push(ins.id)
       }
+      const data3 = this.repo.find();
 
+      const data1 = this.repo
+        .createQueryBuilder('ins')
+        .leftJoinAndMapMany(
+          'ins.countries',
+          Country,
+          'con',
+          'ins.id = con.institutionId',
+        )
+        .leftJoinAndMapOne(
+          'ins.type',
+          InstitutionType,
+          'type',
+          'type.id = ins.typeId',
+        )
+        .leftJoinAndMapMany(
+          'ins.user',
+          User,
+          'user',
+          'ins.id = user.institutionId',
+        )
+        .leftJoinAndMapOne(
+          'user.userType',
+          UserType,
+          'userType',
+          'userType.id =user.userTypeId',
+        )
+        .where('ins.id in (:...newarray)', { newarray })
+
+      let item =new Array()
+      let re =new Array()
+      let total :number
+      // const result = await paginate(data1, options);
+      // let data2= data3.execute();
+      if (data1) {
+        
+        total = (await data3).length;
+        item= await data1.getMany();
+        re.push(total);
+        re.push(item)
+        return re;
+      }
     }
-
   }
 
   async getInstitution(insId: number) {
