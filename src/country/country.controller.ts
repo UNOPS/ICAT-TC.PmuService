@@ -53,14 +53,11 @@ export class CountryController implements CrudController<Country>{
     @ParsedRequest() req: CrudRequest,
     @ParsedBody() dto: Country,
   ) {
-    // console.log('connn',dto.countrysector)
     let coun_sec = dto.countrysector;
 
     let old_countrysector = (await this.CountryRepo.findOne(dto.id)).countrysector;
 
-    // console.log("++++",old_countrysector)
     let sec = old_countrysector.filter((a) => !coun_sec.some((b) => a.sectorId == b.sector.id));
-    // console.log("++",sec)
 
     sec.forEach((a) => this.CountrySectorRepo.delete(a.id));
     let coun = await this.base.updateOneBase(req, dto);
@@ -107,10 +104,6 @@ export class CountryController implements CrudController<Country>{
     audit.comment = "Country Activated";
     audit.actionStatus = 'Activated';
     this.auditService.create(audit);
-    // console.log("audit.......", audit);
-
-
-    // console.log("act-country===", coun)
     return coun;
   }
 
