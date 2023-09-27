@@ -48,13 +48,6 @@ import { UsersService } from './users.service';
         eager: true,
       },
     },
-
-    // this works
-    // filter: {
-    //   id: {
-    //     $eq: 1,
-    //   }
-    // }
   },
 })
 @Controller('users')

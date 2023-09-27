@@ -93,19 +93,13 @@ export class Country extends BaseTrackingEntity{
 
 
   @Column({ default: null })
-  climateActionModule: boolean;
+  carboneMarketTool: boolean;
 
   @Column({ default: null })
-  ghgModule: boolean;
+  portfoloaTool: boolean;
 
   @Column({ default: null })
-  macModule: boolean;
-
-  @Column({ default: null })
-  dataCollectionModule: boolean;
-
-  @Column({ default: null })
-  dataCollectionGhgModule: boolean;
+  investmentTool: boolean;
 
   @Column({ default: null })
   isSingleCountry: number;
