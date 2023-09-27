@@ -40,31 +40,15 @@ export class UsersService extends TypeOrmCrudService<User> {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    //console.log("CreateUser=====",createUserDto.institution['id'])
-    //console.log("CreateUserwwwwww=====",createUserDto.userType['id'])
-    console.log("CreateUserYYY=====",createUserDto)
 
     let userType = await this.usersTypeRepository.findOne(
       createUserDto.userType['id'],
     );
-
-    // let institution;
-    // if(createUserDto.userType['id'] == 3)
-    
-    // {
-      
-    //    institution = await this.institutionRepository.findOne(
-    //     createUserDto.institution['id'],
-    //   );
-  
-    // }
     let countryId = null;
     let insId = null;
     if(createUserDto.userType['id'] == 3){
-      console.log("okkkkkkkk")
       countryId = null;
       insId = createUserDto.institution['id'];
-      console.log("Hi==",countryId)  
     }
     else if(createUserDto.userType['id'] == 2){
       countryId = createUserDto.country['id'];
@@ -88,11 +72,6 @@ export class UsersService extends TypeOrmCrudService<User> {
     let institution = await this.institutionRepository.findOne(
       insId
     );
-
-    //To-do get country id from current context
-
-    // let countryId = createUserDto.country['id'];
-   // let countryId = 1;
     let country = await this.countryRepo.findOne(countryId);
 
     let newUser = new User();
@@ -122,16 +101,10 @@ export class UsersService extends TypeOrmCrudService<User> {
     var newUserDb = await this.usersRepository.save(newUser);
     // get an environment variable
     let systemLoginUrl='';
-    if(newUser.userType.id ==2){
-      let url= "https://icat-ca-tool.climatesi.com/icat-country-app/"
-       systemLoginUrl = url//this.configService.get<string>("https://icat-ca-tool.climatesi.com/icat-country-app/");
-    }
-    else{
+    if(newUser.userType.id !=2){
       let url= "https://icat-ca-tool.climatesi.com/pmu-app/login"
-       systemLoginUrl =url// this.configService.get<string>('LOGIN_URL');
-    }
-
-    var template =
+       systemLoginUrl = url//this.configService.get<string>("https://icat-ca-tool.climatesi.com/icat-country-app/");
+       var template =
       'Dear ' +
       newUserDb.firstName +
       ' ' +
@@ -144,14 +117,15 @@ export class UsersService extends TypeOrmCrudService<User> {
       '<br/>' +
       '<br/>Best regards'+ 
       '<br/>Software support team';
-
-    // sned email with new password
     this.emaiService.sendMail(
       newUserDb.email,
       'Your credentials for ICAT system',
       '',
       template,
     );
+    }
+
+    
 
     newUserDb.password = '';
     newUserDb.salt = '';
