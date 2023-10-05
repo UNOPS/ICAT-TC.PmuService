@@ -102,7 +102,7 @@ export class UsersService extends TypeOrmCrudService<User> {
     // get an environment variable
     let systemLoginUrl='';
     if(newUser.userType.id !=2){
-      let url= "http://3.108.9.184/pmu/login"
+      let url= "http://3.108.9.184/pmu/reset-password"
        systemLoginUrl = url//this.configService.get<string>("https://icat-ca-tool.climatesi.com/icat-country-app/");
        var template =
       'Dear ' +
