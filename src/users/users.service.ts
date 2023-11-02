@@ -102,7 +102,7 @@ export class UsersService extends TypeOrmCrudService<User> {
     // get an environment variable
     let systemLoginUrl='';
     if(newUser.userType.id !=2){
-      let url= "http://3.108.9.184/pmu/reset-password"
+      let url= "http://15.206.202.183/pmu/reset-password"
        systemLoginUrl = url//this.configService.get<string>("https://icat-ca-tool.climatesi.com/icat-country-app/");
        var template =
       'Dear ' +
@@ -150,7 +150,8 @@ export class UsersService extends TypeOrmCrudService<User> {
     userId: number,
     newToken: string,
   ): Promise<User> {
-    let systemLoginUrl = this.configService.get<string>('LOGIN_URL');
+    let url= "http://15.206.202.183/pmu/login"
+    let systemLoginUrl = url //this.configService.get<string>('LOGIN_URL');
     let user = await this.usersRepository.findOne(userId);
     user.resetToken = newToken;
     let newUUID = uuidv4();
@@ -290,7 +291,7 @@ export class UsersService extends TypeOrmCrudService<User> {
       const url = process.env.COUNTRY_LOGIN_URL;
     }
     else {
-      const url = process.env.PMU_LOGIN_URL;
+      let url= "http://15.206.202.183/pmu/login"
       systemLoginUrl = url;
     }
     if (user) {
