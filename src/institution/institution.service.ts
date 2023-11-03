@@ -44,11 +44,10 @@ export class InstitutionService extends TypeOrmCrudService<Institution> {
 
     
     if (countryId != 0 || filterText) {
-      console.log("GGGGGGGG", filter)
-      if (filterText) {
+      if (filter  && countryId!=0) {
         filter = `${filter}  AND con.id = ${countryId}`;
       } 
-      else{
+      else if (countryId !=0){
         filter =`con.id = ${countryId}`;
       }
       let data = this.repo
@@ -59,7 +58,6 @@ export class InstitutionService extends TypeOrmCrudService<Institution> {
         .leftJoinAndMapOne('user.userType', UserType, 'userType', 'userType.id =user.userTypeId')//userType.id 
         .where(filter, {
           filterText: `%${filterText}%`,
-          countryId
         })
         .orderBy('ins.status', 'ASC')
       let resualt = await paginate(data, options);
