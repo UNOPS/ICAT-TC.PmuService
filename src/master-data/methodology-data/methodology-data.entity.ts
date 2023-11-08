@@ -4,6 +4,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 't
 import { ApplicabilityEntity } from '../applicability/applicability.entity';
 import { MitigationActionType } from '../mitigation-action/mitigation-action.entity';
 import { Sector } from '../sector/sector.entity';
+import { Indicator } from 'src/master-data/indicator/entities/indicator.entity';
 
 @Entity()
 export class MethodologyData extends BaseTrackingEntity {
@@ -50,6 +51,10 @@ export class MethodologyData extends BaseTrackingEntity {
     @ManyToOne((type) => Sector, { cascade: false })
     @JoinColumn({ name: 'sectorId' })
     sector?: Sector;
+
+  @ManyToOne((type) => Indicator, { cascade: true })
+    @JoinColumn({ name: 'indicatorId' })
+    indicator?: Indicator;   
 
     @ManyToOne((type) => MitigationActionType, { cascade: false })
     @JoinColumn({ name: 'mitigationActionTypeId' })

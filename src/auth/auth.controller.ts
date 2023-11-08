@@ -12,9 +12,14 @@ import { AuditService } from 'src/audit/audit.service';
 import { AuditDto } from 'src/audit/dto/audit-dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/users/user.entity';
+import axios from 'axios';
 
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
+// const auditlogURL = 'http://localhost:7000/audit';
 
 @Controller('auth')
 export class AuthController {
@@ -25,26 +30,49 @@ export class AuthController {
     private configService: ConfigService,
     private emailService: EmailNotificationService,
 
+    @InjectRepository(User)
+    private readonly userRepo : Repository<User>,
+
     private readonly auditService: AuditService,
 
   ) {}
 
+  audit2:any
+
   @Post('auth/login')
   async login(@Body() authCredentialDto: AuthCredentialDto): Promise<any> {
     //return req.user;
-    console.log('AppController.login');
+  //  console.log('AppController.login');
      this.username = authCredentialDto.username;
 
-   console.log("authcred---",authCredentialDto.username)
+   console.log("authcred---",authCredentialDto)
 
-     let audit: AuditDto = new AuditDto();
+   let user = await this.userRepo.findOne({
+    where: { email: this.username },
+  });
+
+
+  /*    let audit: AuditDto = new AuditDto();
     audit.action =  authCredentialDto.username +" Is Logged";
     audit.comment = "User Logged";
     audit.actionStatus = 'Logged';
-    audit.userName = authCredentialDto.username;
+    audit.userName = authCredentialDto.username; */
   
-    this.auditService.create(audit);
-    console.log("audit.......",audit);
+    this.audit2 = {
+
+      description : authCredentialDto.username +" Is Logged",
+      userName : authCredentialDto.username,
+      actionStatus: "Logged",
+      userType : user.userType.name,
+       uuId : user.userType.id,
+       institutionId : user.institution.id,
+     }
+    
+    // const response = await axios.post(auditlogURL, this.audit2);
+  //  this.auditService.create(audit);
+    // console.log("audit2.......",response);
+
+    
 
     return await this.authService.login(authCredentialDto);
   
@@ -76,6 +104,7 @@ export class AuthController {
       let res = await this.usersService.resetPassword(
         resetPwd.email,
         resetPwd.password,
+        resetPwd.code,
       );
 
       return res;

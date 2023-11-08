@@ -89,23 +89,17 @@ export class Country extends BaseTrackingEntity{
   //new added
   @ManyToOne((type) => Institution, { eager: true })
   @JoinColumn()
-  institution?: Institution;
+  institution?: Institution |null;
 
 
   @Column({ default: null })
-  climateActionModule: boolean;
+  carboneMarketTool: boolean;
 
   @Column({ default: null })
-  ghgModule: boolean;
+  portfoloaTool: boolean;
 
   @Column({ default: null })
-  macModule: boolean;
-
-  @Column({ default: null })
-  dataCollectionModule: boolean;
-
-  @Column({ default: null })
-  dataCollectionGhgModule: boolean;
+  investmentTool: boolean;
 
   @Column({ default: null })
   isSingleCountry: number;
