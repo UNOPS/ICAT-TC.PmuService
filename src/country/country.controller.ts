@@ -35,8 +35,8 @@ export class CountryController implements CrudController<Country>{
     public service: CountryService,
     @InjectRepository(Country)
     public CountryRepo: Repository<Country>,
-    @InjectRepository(CountrySector)
-    public CountrySectorRepo: Repository<CountrySector>,
+    // @InjectRepository(CountrySector)
+    // public CountrySectorRepo: Repository<CountrySector>,
     private readonly auditService: AuditService,
 
 
@@ -53,18 +53,15 @@ export class CountryController implements CrudController<Country>{
     @ParsedRequest() req: CrudRequest,
     @ParsedBody() dto: Country,
   ) {
-    // console.log('connn',dto.countrysector)
     let coun_sec = dto.countrysector;
 
-    let old_countrysector = (await this.CountryRepo.findOne(dto.id)).countrysector;
+    // let old_countrysector = (await this.CountryRepo.findOne(dto.id)).countrysector;
 
-    // console.log("++++",old_countrysector)
-    let sec = old_countrysector.filter((a) => !coun_sec.some((b) => a.sectorId == b.sector.id));
-    // console.log("++",sec)
+    // let sec = old_countrysector.filter((a) => !coun_sec.some((b) => a.sectorId == b.sector.id));
 
-    sec.forEach((a) => this.CountrySectorRepo.delete(a.id));
+    // sec.forEach((a) => this.CountrySectorRepo.delete(a.id));
     let coun = await this.base.updateOneBase(req, dto);
-    coun_sec.forEach((a) => { a.countryId = dto.id, this.CountrySectorRepo.save(a) })
+    // coun_sec.forEach((a) => { a.countryId = dto.id, this.CountrySectorRepo.save(a) })
 
    
     return coun;
@@ -94,7 +91,7 @@ export class CountryController implements CrudController<Country>{
 
     try {
       dto.countrysector.map(async (a) => {
-        let lms = await this.CountrySectorRepo.save(await a);
+        // let lms = await this.CountrySectorRepo.save(await a);
       });
     } catch (error) {
       console.log(error);
@@ -107,10 +104,6 @@ export class CountryController implements CrudController<Country>{
     audit.comment = "Country Activated";
     audit.actionStatus = 'Activated';
     this.auditService.create(audit);
-    // console.log("audit.......", audit);
-
-
-    // console.log("act-country===", coun)
     return coun;
   }
 
@@ -125,7 +118,7 @@ export class CountryController implements CrudController<Country>{
   @Get('country-sector')
   async getCountrySector(): Promise<any>{
 
-    return this.CountrySectorRepo.find();
+    // return this.CountrySectorRepo.find();
   }
 
 }

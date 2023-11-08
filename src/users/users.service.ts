@@ -40,31 +40,15 @@ export class UsersService extends TypeOrmCrudService<User> {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    //console.log("CreateUser=====",createUserDto.institution['id'])
-    //console.log("CreateUserwwwwww=====",createUserDto.userType['id'])
-    console.log("CreateUserYYY=====",createUserDto)
 
     let userType = await this.usersTypeRepository.findOne(
       createUserDto.userType['id'],
     );
-
-    // let institution;
-    // if(createUserDto.userType['id'] == 3)
-    
-    // {
-      
-    //    institution = await this.institutionRepository.findOne(
-    //     createUserDto.institution['id'],
-    //   );
-  
-    // }
     let countryId = null;
     let insId = null;
     if(createUserDto.userType['id'] == 3){
-      console.log("okkkkkkkk")
       countryId = null;
       insId = createUserDto.institution['id'];
-      console.log("Hi==",countryId)  
     }
     else if(createUserDto.userType['id'] == 2){
       countryId = createUserDto.country['id'];
@@ -88,11 +72,6 @@ export class UsersService extends TypeOrmCrudService<User> {
     let institution = await this.institutionRepository.findOne(
       insId
     );
-
-    //To-do get country id from current context
-
-    // let countryId = createUserDto.country['id'];
-   // let countryId = 1;
     let country = await this.countryRepo.findOne(countryId);
 
     let newUser = new User();
@@ -122,36 +101,31 @@ export class UsersService extends TypeOrmCrudService<User> {
     var newUserDb = await this.usersRepository.save(newUser);
     // get an environment variable
     let systemLoginUrl='';
-    if(newUser.userType.id ==2){
-      let url= "https://icat-ca-tool.climatesi.com/icat-country-app/"
+    if(newUser.userType.id !=2){
+      let url= "http://3.108.9.184/pmu/reset-password"
        systemLoginUrl = url//this.configService.get<string>("https://icat-ca-tool.climatesi.com/icat-country-app/");
-    }
-    else{
-      let url= "https://icat-ca-tool.climatesi.com/pmu-app/login"
-       systemLoginUrl =url// this.configService.get<string>('LOGIN_URL');
-    }
-
-    var template =
+       var template =
       'Dear ' +
       newUserDb.firstName +
       ' ' +
       newUserDb.lastName +
-      ' <br/>Your username is ' +
+      ' <br/>Your username is : ' +
       newUserDb.email +
-      ' and your login password is : ' +
+      ' <br/> your login code is : ' +
       newPassword +
-      ' <br/>System login url is'+' <a href="' +systemLoginUrl + '">'+systemLoginUrl+'</a>'+
+      ' <br/>System login url is :'+' <a href="' +systemLoginUrl + '">'+systemLoginUrl+'</a>'+
       '<br/>' +
       '<br/>Best regards'+ 
       '<br/>Software support team';
-
-    // sned email with new password
     this.emaiService.sendMail(
       newUserDb.email,
       'Your credentials for ICAT system',
       '',
       template,
     );
+    }
+
+    
 
     newUserDb.password = '';
     newUserDb.salt = '';
@@ -176,7 +150,8 @@ export class UsersService extends TypeOrmCrudService<User> {
     userId: number,
     newToken: string,
   ): Promise<User> {
-    let systemLoginUrl = this.configService.get<string>('LOGIN_URL');
+    let url= "http://15.206.202.183/pmu/login"
+    let systemLoginUrl = url // this.configService.get<string>('LOGIN_URL');
     let user = await this.usersRepository.findOne(userId);
     user.resetToken = newToken;
     let newUUID = uuidv4();
@@ -219,7 +194,6 @@ export class UsersService extends TypeOrmCrudService<User> {
   async validateUser(userName: string, password: string): Promise<boolean> {
     const user = await this.usersRepository.findOne({ username: userName });
 
-    console.log(user);
 
     return (await user).validatePassword(password);
   }
@@ -310,27 +284,78 @@ export class UsersService extends TypeOrmCrudService<User> {
     }
   }
 
-  async resetPassword(email: string, password: string): Promise<boolean> {
+  async resetPassword(email: string, password: string,code: string): Promise<boolean> {
+    let systemLoginUrl;
     let user = await this.usersRepository.findOne({ email: email });
-    console.log(user);
-    if (user) {
-      let salt = await bcript.genSalt();
-      console.log('password', password, 'salt', salt);
-      user.salt = salt;
-      user.password = await this.hashPassword(password, salt);
-      console.log('inside success');
-
-      await this.usersRepository.save(user);
-
-      console.log('inside success2');
-
-      await this.updateChnagePasswordToken(user.id, ''); // clean the tocken
-
-      console.log('inside success3');
-
-      return true;
+    if (user.userType.id == 2) {
+      const url = process.env.COUNTRY_LOGIN_URL;
     }
-    console.log('inside fail');
+    else {
+      let url= "http://15.206.202.183/pmu/login"
+      systemLoginUrl = url;
+    }
+    if (user) {
+      if (code) {
+        const hashPassword = await bcript.hash(code, user.salt);
+        if(hashPassword ==user.password){
+          let salt = await bcript.genSalt();
+          user.salt = salt;
+          user.password = await this.hashPassword(
+            password,
+            user.salt,
+          );
+          await this.usersRepository.save(user);  
+          var template =
+            'Dear ' + user.firstName + " " + user.lastName +
+            ' <br/>Your username is ' +
+            user.email +
+            '<br/> your login password is : ' +
+            password +
+            ' <br/>System login url is ' + '<a href="systemLoginUrl">' +
+            systemLoginUrl;
+    
+          this.emaiService.sendMail(
+            user.email,
+            'Your credentials for ICAT system',
+            '',
+            template,
+          );
+    
+          return true;
+        }
+  
+        return false;
+      }
+
+      else{
+        let salt = await bcript.genSalt();
+        user.salt = salt;
+        user.password = await this.hashPassword(
+          password,
+          user.salt,
+        );
+        await this.usersRepository.save(user);  
+        var template =
+          'Dear ' + user.firstName + " " + user.lastName +
+          ' <br/>Your username is ' +
+          user.email +
+          '<br/> your login password is : ' +
+          password +
+          ' <br/>System login url is ' + '<a href="systemLoginUrl">' +
+          systemLoginUrl;
+  
+        this.emaiService.sendMail(
+          user.email,
+          'Your credentials for ICAT system',
+          '',
+          template,
+        );
+  
+        return true;
+      }
+
+     
+    }
 
     return false;
   }

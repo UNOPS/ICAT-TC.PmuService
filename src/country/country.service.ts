@@ -4,15 +4,12 @@ import { CrudRequest } from '@nestjsx/crud';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { Sector } from 'src/master-data/sector/sector.entity';
 import { Repository } from 'typeorm';
-import { CountrySector } from './entity/country-sector.entity';
 import { Country } from './entity/country.entity';
 
 @Injectable()
 export class CountryService extends TypeOrmCrudService<Country>{
     constructor(
         @InjectRepository(Country)repo,
-        @InjectRepository(CountrySector)
-        public CountrySectorRepo: Repository<CountrySector>,
 
 
         ){
@@ -55,19 +52,19 @@ export class CountryService extends TypeOrmCrudService<Country>{
       let data;
       if (countryId != 0) {
         data = this.repo.createQueryBuilder('cou')
-          .leftJoinAndMapMany(
-            'cou.countrysector',
-            CountrySector,
-            'cs',
-            // `cs.countryId = cou.id `,
-            `cou.id = cs.countryId `,
+          // .leftJoinAndMapMany(
+          //   'cou.countrysector',
+          //   CountrySector,
+          //   'cs',
+          //   // `cs.countryId = cou.id `,
+          //   `cou.id = cs.countryId `,
 
-          ).leftJoinAndMapOne(
-            'cs.sector',
-            Sector,
-            'sec',
-            `sec.id = cs.sectorId`
-          )
+          // ).leftJoinAndMapOne(
+          //   'cs.sector',
+          //   Sector,
+          //   'sec',
+          //   `sec.id = cs.sectorId`
+          // )
             // `meth.id = asse.methodologyId and asse.methodolgyId IS NOT NULL  and meth.countryId = ${country} `
           // ).innerJoinAndMapOne(
 
