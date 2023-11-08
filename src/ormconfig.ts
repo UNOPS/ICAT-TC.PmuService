@@ -28,9 +28,12 @@ const config: ConnectionOptions = {
   // password: '12345',
 
   //database: 'nccdsndb',
+  // username: 'root',
+  // password: 'pradeep123#',
+  // database: 'icat_pmu',
   username: 'root',
-  password: 'pradeep123#',
-  database: 'icat_pmu',
+  password: '1997',
+  database: 'pmu',
 
 
 
