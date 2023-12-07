@@ -2,8 +2,6 @@ import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Crud, CrudController } from '@nestjsx/crud';
-import * as moment from 'moment';
-import { audit } from 'rxjs';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Repository } from 'typeorm';
 import { AuditService } from './audit.service';
@@ -56,13 +54,9 @@ export class AuditController implements CrudController<Audit> {
         @Query('institutionId') institutionId:number
         
       ): Promise<any> { 
-       //let editedOnnew= moment(editedOn, "DD/MM/YYYY");
     
        var timestamp = Date.parse(editedOn);
-      var dateObject = new Date(timestamp);
-      
-      console.log('jjjjjjfffff',moment(editedOn,'YYYY-MM-DD').format('YYYY-MM-DD'));
-      console.log('hhh',editedOn)
+      var dateObject = new Date(timestamp)
         return await this.service.getAuditDetails(
           {
             limit: limit,

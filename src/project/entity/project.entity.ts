@@ -1,5 +1,4 @@
-import { ApiProperty, ApiBody } from '@nestjs/swagger';
-import { type } from 'os';
+
 import { Country } from 'src/country/entity/country.entity';
 import { Institution } from 'src/institution/institution.entity';
 import { FinancingScheme } from 'src/master-data/financing-scheme/financing-scheme.entity';
@@ -24,9 +23,7 @@ import {
 
 @Entity({ name: 'climateAction' })
 export class Project extends BaseTrackingEntity {
-  /**
-   *
-   */
+
   constructor() {
     super();
     this.createdBy = '';
@@ -189,7 +186,6 @@ export class Project extends BaseTrackingEntity {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: null })
   expectedRecurrentExpenditure;
 
-  //For mistgation actions - related to climate action table in future
 
   @ManyToOne((type) => MitigationActionType, { cascade: false })
   @JoinColumn()

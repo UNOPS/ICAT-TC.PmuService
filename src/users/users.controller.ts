@@ -16,12 +16,9 @@ import {
   Crud,
   CrudController,
   CrudRequest,
-  GetManyDefaultResponse,
   Override,
   ParsedRequest,
-  ParsedBody,
 } from '@nestjsx/crud';
-import { request } from 'http';
 import { AuditService } from 'src/audit/audit.service';
 import { AuditDto } from 'src/audit/dto/audit-dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -71,7 +68,6 @@ export class UsersController implements CrudController<User> {
     audit.comment = "User Created";
     audit.actionStatus = 'Created';
     this.auditService.create(audit);
-    console.log("audit.......",audit);
 
     return this.service.create(createUserDto);
 
@@ -81,7 +77,6 @@ export class UsersController implements CrudController<User> {
 
   @Patch('changeStatus')
   changeStatus( @Query('id') id:number, @Query('status') status:number): Promise<User> {
-   console.log('status',status)
    
     return this.service.chnageStatus(id,status);
   }
@@ -89,15 +84,12 @@ export class UsersController implements CrudController<User> {
   @Get('findUserBy')
   async findUserByUserType(@Request() request): Promise<any> {
     
-
-    // console.log('test', this.service.findByUserName(userName));
     return await this.service.findUserByUserType();
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<User> {
   let x = await this.service.findOne(id);
-  console.log("xxxxxxxxxxxx=====",x)
     return this.service.findOne(id);
   }
 
@@ -108,9 +100,7 @@ export class UsersController implements CrudController<User> {
 
   @Get('findUserByUserName/:userName')
   async findUserByUserName(@Param('userName') userName: string): Promise<any> {
-    console.log(userName);
 
-    console.log('test', this.service.findByUserName(userName));
     return await this.service.findUserByUserName(userName);
   }
 
@@ -126,11 +116,8 @@ export class UsersController implements CrudController<User> {
   @Override()
   async getMany(@ParsedRequest() req: CrudRequest, @Request() req2) {
     
-    
-    console.log(req.parsed.filter.length, req.parsed.search['$and'][0]);
 
     let userList = this.base.getManyBase(req);
-    console.log('yyyyyyyyyyyyyyyyyyyyyyyy',userList);
 
     return userList;
   }
@@ -148,7 +135,6 @@ export class UsersController implements CrudController<User> {
     @Query('filterText') filterText: string,
     @Query('userTypeId') userTypeId: number,
   ): Promise<any>{
-    console.log('incontroler...')
     return await this.service
     .getUserDetails(
       {
@@ -170,7 +156,6 @@ export class UsersController implements CrudController<User> {
     @Query('userTypeId') filterText: string,
     @Query('userTypeId') userTypeId: number,
   ): Promise<any>{
-    console.log('incontroler...')
     return await this.service
     .getUserDetails(
       {

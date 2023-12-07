@@ -1,21 +1,17 @@
-import { type } from 'os';
+
 import { Country } from 'src/country/entity/country.entity';
-import { Sector } from 'src/master-data/sector/sector.entity';
 import { BaseTrackingEntity } from 'src/shared/entities/base.tracking.entity';
-import { MasterData } from 'src/shared/entities/master.data.entity';
 import {
   Column,
   DeleteDateColumn,
   Entity,
   Generated,
-  Index,
   JoinColumn,
   JoinTable,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { InstitutionCategory } from './institution.category.entity';
 import { InstitutionType } from './institution.type.entity';
 
 @Entity()
@@ -42,9 +38,6 @@ export class Institution extends BaseTrackingEntity {
   @Column()
   sortOrder: number;
 
-  // @ManyToOne((type) => InstitutionCategory)
-  // @JoinColumn()
-  // category: InstitutionCategory;
 
   @Column()
     @Generated("uuid")

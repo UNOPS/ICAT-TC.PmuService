@@ -4,7 +4,6 @@ import { Sector } from 'src/master-data/sector/sector.entity';
 import { LearningMaterialSector } from './entity/learning-material-sector.entity';
 import { LearningMaterialUserType } from './entity/learning-material-usertype.entity';
 import { LearningMaterial } from './entity/learning-material.entity';
-// import { LearningMaterialSectorController } from './learning-material-sector.controller';
 import { LearningMaterialSectorService } from './learning-material-sector.service';
 import { LearningMaterialUsreTypeService } from './learning-material-usertype.service';
 import { LearningMaterialController } from './learning-material.controller';

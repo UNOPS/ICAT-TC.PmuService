@@ -59,14 +59,8 @@ export class SectorController implements CrudController<Sector> {
   ): Promise<GetManyDefaultResponse<Sector> | Sector[]> {
     try {
       let res = await this.base.getManyBase(req);
-      // console.log('*********************************************');
-      // console.log(res);
-      // console.log('*********************************************');
-      // console.log(req);
       return res;
     } catch (error) {
-      console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-      console.log(error);
     }
   }
 
@@ -81,7 +75,6 @@ export class SectorController implements CrudController<Sector> {
     @Query('filterText') filterText: string,
     
   ): Promise<any> {
-    // console.log(moment(editedOn).format('YYYY-MM-DD'))
     return await this.service.getSectorDetails(
       {
         limit: limit,
@@ -109,8 +102,6 @@ export class SectorController implements CrudController<Sector> {
     @ParsedBody() dto: Sector,
   ): Promise<Sector> {
    
-     
-      //console.log("came to inside...",dto);
 
       let lm = await this.base.createOneBase(req, dto);
       
@@ -119,7 +110,6 @@ export class SectorController implements CrudController<Sector> {
       audit.comment = "Sector Created";
       audit.actionStatus = 'Created';
       this.auditService.create(audit);
-      console.log("audit.......",audit);
 
 
 
@@ -139,7 +129,6 @@ export class SectorController implements CrudController<Sector> {
             let lms = await this.SubSectorRepo.save(await a);
           });
         } catch (error) {
-          console.log(error);
         }
 
       return lm;

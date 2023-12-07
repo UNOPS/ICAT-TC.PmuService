@@ -1,13 +1,9 @@
 import { Institution } from 'src/institution/institution.entity';
-import { Sector } from 'src/master-data/sector/sector.entity';
 import { BaseTrackingEntity } from 'src/shared/entities/base.tracking.entity';
-import { MasterData } from 'src/shared/entities/master.data.entity';
 import {
   Column,
   Entity,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -37,14 +33,6 @@ export class Country extends BaseTrackingEntity{
   @Column({ default: 1 })
   sortOrder: number;
 
-  // @Column({ default: null })
-  // submissions: string; // add as string for document upload
-
-  // @Column({ default: null })
-  // emissionSummary: string;
-
-  // @Column({ default: null })
-  // ndcDocuments: string;
 
   @Column({ default: null })
   isSystemUse: boolean;
@@ -62,10 +50,7 @@ export class Country extends BaseTrackingEntity{
   @Column({ default: null })
   isMember: boolean;
 
- // @Column({ default: null })
- // isRegister: boolean;
-
-  @Column({ default: null })  // enum 
+  @Column({ default: null })  
   countryStatus: countryStatus;
 
   @Column({ default: null })
@@ -78,15 +63,6 @@ export class Country extends BaseTrackingEntity{
   @JoinColumn()
   countrysector: CountrySector[];
 
-  /*
-  @ManyToMany((type) => Sector, {
-    eager: true,
-    cascade: false,
-  })
-  @JoinTable({ name: 'country_sector' })
-  Sector?: Sector[];*/
-
-  //new added
   @ManyToOne((type) => Institution, { eager: true })
   @JoinColumn()
   institution?: Institution |null;

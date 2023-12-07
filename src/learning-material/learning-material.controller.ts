@@ -5,7 +5,6 @@ import { Sector } from 'src/master-data/sector/sector.entity';
 import { Repository } from 'typeorm';
 import { LearningMaterialSector } from './entity/learning-material-sector.entity';
 import { LearningMaterialUserType } from './entity/learning-material-usertype.entity';
-//import { request } from 'http';
 import { LearningMaterial } from './entity/learning-material.entity';
 import { LearningMaterialSectorService } from './learning-material-sector.service';
 import { LearningMaterialUsreTypeService } from './learning-material-usertype.service';
@@ -81,17 +80,9 @@ export class LearningMaterialController implements CrudController<LearningMateri
 
   @Override()
   async deleteOne(@ParsedRequest() req: CrudRequest) {
-    const id = req.parsed.paramsFilter
-    // console.log("hmm id ",req.options.params.id)
+    const id = req.parsed.paramsFilter;
     let lmId = req.parsed.paramsFilter[0].value;
     const res = await this.service.softDelete(lmId);
-    // console.log("hmm id ",req.parsed.paramsFilter[0].value);
-    //   .find(f => f.field === 'id' && f.operator === '$eq').value;
-    // const res = await this.service.softDelete(id);
-    // const res = await this.LearningMaterialRepo.delete(lmId);
-    //const x = await this.LearningMaterialSectorRepo.find(f => f.learningMaterial2Id == lmId);
-    // console.log("xxxxx ",x)
-    // const res = await this.LearningMaterialSectorRepo.delete(lmId);
     return 1;
   }
 
@@ -108,14 +99,9 @@ export class LearningMaterialController implements CrudController<LearningMateri
     @ParsedBody() dto: LearningMaterial,
   ): Promise<LearningMaterial> {
 
-
-    //console.log("came to inside...",dto);
-
     let lm = await this.base.createOneBase(req, dto);
 
     dto.learningMaterialsector.map((a) => {
-      // let lmtemp = new LearningMaterial();
-      //lmtemp.id = lm.id;
       a.learningMaterial2.id = lm.id;
       a.sector.id = dto.learningMaterialsector[0].sector.id;
     });
@@ -124,13 +110,10 @@ export class LearningMaterialController implements CrudController<LearningMateri
         let lms = await this.LearningMaterialSectorRepo.save(await a);
       });
     } catch (error) {
-      console.log(error);
     }
 
 
     dto.learningMaterialusertype.map((b) => {
-      // let lmtemp = new LearningMaterial();
-      //lmtemp.id = lm.id;
       b.learningMaterial.id = lm.id;
       b.userType.id = dto.learningMaterialusertype[0].userType.id;
     });
@@ -141,11 +124,9 @@ export class LearningMaterialController implements CrudController<LearningMateri
           b.userType=null;
         }
         
-        console.log("+++++++++++++",b)
         let lmus = await this.LearningMaterialUserTypeRepo.save(await b);
       });
     } catch (error) {
-      console.log(error);
     }
 
     return lm;
@@ -153,14 +134,12 @@ export class LearningMaterialController implements CrudController<LearningMateri
 
   @Get("user-type")
   public async getalluserType() {
-    return this.typeService.getdatails()
-    // return details
+    return this.typeService.getdatails();
   }
 
   @Get("sector")
   public async getallsector() {
     return this.sectorService.getdatails();
-    // return details
   }
 
 

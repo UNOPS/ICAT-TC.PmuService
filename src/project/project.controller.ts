@@ -5,7 +5,6 @@ import {
   Crud,
   CrudController,
   CrudRequest,
-  GetManyDefaultResponse,
   Override,
   ParsedBody,
   ParsedRequest,
@@ -83,25 +82,17 @@ export class ProjectController implements CrudController<Project> {
     @ParsedBody() dto: Project,
   ) {
     try {
-      console.log(
-        '-----------------------------------------------------------',
-      );
       dto.createdBy = '-';
       dto.editedBy = '-';
 
-      console.log(dto);
 
       let newplData = await this.base.createOneBase(req, dto);
 
       return newplData;
     } catch (error) {
-      console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-      console.log(error);
       throw error;
     }
 
-    // await this.service.ceateSelfConvertion(dto.unitOfMeasure);
-    // await this.service.ceateReverseConvertion(dto);
   }
 
 
@@ -119,7 +110,6 @@ export class ProjectController implements CrudController<Project> {
     @Query('countryId') countryId: number,
     @Query('sectorId') sectorId: number,
   ): Promise<any> {
-    // console.log("heelo controler");
     return await this.service.getAllCAList(
       {
         limit: limit,
@@ -152,7 +142,6 @@ export class ProjectController implements CrudController<Project> {
     @Query('filterText') filterText: string,
     
   ): Promise<any> {
-    // console.log(moment(editedOn).format('YYYY-MM-DD'))
     return await this.service.getProjectDetails(
       {
         limit: limit,
@@ -209,7 +198,6 @@ export class ProjectController implements CrudController<Project> {
 
     let updateData = await this.base.updateOneBase(req, dto);
     const baseurl = this.configService.get<string>('ClientURl');
-    console.log(baseurl);
 
     if (
       dto.projectApprovalStatus &&

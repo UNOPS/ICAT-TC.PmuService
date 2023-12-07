@@ -13,13 +13,9 @@ export class AppController {
 
   @Get('deploy')
   deploy(){
-    console.log("deloying the main main main service ---------------------------------")
     exec('sh /home/ubuntu/code/pmu-deploy.sh',
         (error, stdout, stderr) => {
-            console.log(stdout);
-            console.log(stderr);
             if (error !== null) {
-                console.log(`exec error: ${error}`);
             }
         });       
 
@@ -29,13 +25,9 @@ export class AppController {
 
   @Get('deloyweb')
   deloyweb(){
-    console.log("deloying the FE ---------------------------------")
     exec('sh /home/ubuntu/code/pmu-web-deploy.sh',
         (error, stdout, stderr) => {
-            console.log(stdout);
-            console.log(stderr);
             if (error !== null) {
-                console.log(`exec error: ${error}`);
             }
         });       
 

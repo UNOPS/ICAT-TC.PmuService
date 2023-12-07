@@ -1,13 +1,10 @@
 import {
-  BaseEntity,
   Column,
   DeleteDateColumn,
   Entity,
   Generated,
   JoinColumn,
   ManyToOne,
-  OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcript from 'bcrypt';
@@ -15,7 +12,6 @@ import { UserType } from './user.type.entity';
 import { Exclude } from 'class-transformer';
 import { BaseTrackingEntity } from 'src/shared/entities/base.tracking.entity';
 import { Institution } from 'src/institution/institution.entity';
-import { Audit } from 'src/audit/entity/audit.entity';
 import { Country } from 'src/country/entity/country.entity';
 
 @Entity()
@@ -26,7 +22,6 @@ export class User extends BaseTrackingEntity {
     this.status = 0;
     this.password = '';
     this.resetToken = '';
-    //  this.abc = this.firstName + this.lastName;
   }
 
   @PrimaryGeneratedColumn()
@@ -95,7 +90,6 @@ export class User extends BaseTrackingEntity {
     this.fullName = this.firstName + (this.lastName ? ' ' + this.lastName : '');
   }
 
-  // abc: string = ()=>{  this.firstName + this.lastName};
 
   get fullname2() {
     return this.firstName;

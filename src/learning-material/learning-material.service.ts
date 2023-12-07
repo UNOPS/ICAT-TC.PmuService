@@ -52,8 +52,6 @@ export class LearningMaterialService extends TypeOrmCrudService<LearningMaterial
             }
           }    
         
-         
-        // let ltype = 'ASC';
 
         if(sortOrder == 0)
         {
@@ -76,7 +74,6 @@ export class LearningMaterialService extends TypeOrmCrudService<LearningMaterial
               typeId,
               sectorId,
           })
-          //.orderBy('lm.documentName', 'ASC'); DESC
           .orderBy(val, 'DESC');
         }
         else
@@ -100,7 +97,6 @@ export class LearningMaterialService extends TypeOrmCrudService<LearningMaterial
               typeId,
               sectorId,
           })
-          //.orderBy('lm.documentName', 'ASC'); DESC
           .orderBy(val, 'ASC');
 
         }
@@ -109,10 +105,6 @@ export class LearningMaterialService extends TypeOrmCrudService<LearningMaterial
             
 
             let resualt = await paginate(data, options);
-      /*    console.log(
-      '=====================================================================',
-     );
-    console.log(data.getQuery()); */
             if(resualt){
                 return resualt;
             }

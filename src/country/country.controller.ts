@@ -6,7 +6,6 @@ import { AuditDto } from 'src/audit/dto/audit-dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Repository } from 'typeorm';
 import { CountryService } from './country.service';
-import { CountrySector } from './entity/country-sector.entity';
 import { Country } from './entity/country.entity';
 
 @Crud({
@@ -35,8 +34,6 @@ export class CountryController implements CrudController<Country>{
     public service: CountryService,
     @InjectRepository(Country)
     public CountryRepo: Repository<Country>,
-    // @InjectRepository(CountrySector)
-    // public CountrySectorRepo: Repository<CountrySector>,
     private readonly auditService: AuditService,
 
 
@@ -55,13 +52,7 @@ export class CountryController implements CrudController<Country>{
   ) {
     let coun_sec = dto.countrysector;
 
-    // let old_countrysector = (await this.CountryRepo.findOne(dto.id)).countrysector;
-
-    // let sec = old_countrysector.filter((a) => !coun_sec.some((b) => a.sectorId == b.sector.id));
-
-    // sec.forEach((a) => this.CountrySectorRepo.delete(a.id));
     let coun = await this.base.updateOneBase(req, dto);
-    // coun_sec.forEach((a) => { a.countryId = dto.id, this.CountrySectorRepo.save(a) })
 
    
     return coun;
@@ -78,8 +69,7 @@ export class CountryController implements CrudController<Country>{
 
     dto.isSystemUse = true;
 
-    var x: number = 0
-    console.log('connn', dto)
+    var x: number = 0;
     dto.countrysector.map((a) => {
 
       a.country.id = dto.id;
@@ -91,10 +81,8 @@ export class CountryController implements CrudController<Country>{
 
     try {
       dto.countrysector.map(async (a) => {
-        // let lms = await this.CountrySectorRepo.save(await a);
       });
     } catch (error) {
-      console.log(error);
     }
 
     let coun = await this.base.createOneBase(req, dto);
@@ -118,7 +106,6 @@ export class CountryController implements CrudController<Country>{
   @Get('country-sector')
   async getCountrySector(): Promise<any>{
 
-    // return this.CountrySectorRepo.find();
   }
 
 }

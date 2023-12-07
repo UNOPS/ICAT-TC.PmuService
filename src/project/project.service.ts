@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
+import { InjectRepository, } from '@nestjs/typeorm';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { Project } from './entity/project.entity';
 import {
@@ -27,11 +27,8 @@ export class ProjectService extends TypeOrmCrudService<Project> {
     editedOn: string,
   ): Promise<Pagination<Project>> {
     let filter: string = '';
-    // let fDate = `${editedOn.getFullYear()}-${editedOn.getMonth()+1}-${editedOn.getDate()}`;
-
     if (filterText != null && filterText != undefined && filterText != '') {
       filter =
-        // '(dr.climateActionName LIKE :filterText OR dr.description LIKE :filterText)';
         '(dr.climateActionName LIKE :filterText OR dr.contactPersoFullName LIKE :filterText OR sec.name LIKE :filterText OR mit.name LIKE :filterText OR pst.name LIKE :filterText OR dr.editedOn LIKE :filterText)';
     }
 
@@ -74,8 +71,6 @@ export class ProjectService extends TypeOrmCrudService<Project> {
         'pst',
         'pst.id = dr.projectStatusId',
       )
-      //   .innerJoinAndMapOne('dr.user', User, 'u', 'dr.userId = u.id')
-
       .where(filter, {
         filterText: `%${filterText}%`,
         mitigationActionTypeId,
@@ -84,11 +79,6 @@ export class ProjectService extends TypeOrmCrudService<Project> {
         editedOn,
       })
       .orderBy('dr.createdOn', 'DESC');
-    // console.log(
-    //   '=====================================================================',
-    // );
-    // console.log(data.getQuery());
-
     let resualt = await paginate(data, options);
 
     if (resualt) {
@@ -111,7 +101,6 @@ export class ProjectService extends TypeOrmCrudService<Project> {
       filter =
         '(dr.climateActionName LIKE :filterText OR asse.assessmentType LIKE :filterText OR para.AssessmentYear LIKE :filterText OR dr.institution LIKE :filterText OR pas.name LIKE :filterText OR pst.name LIKE :filterText OR dr.contactPersoFullName LIKE :filterText  OR dr.editedOn LIKE :filterText OR dr.createdOn LIKE :filterText OR dr.acceptedDate LIKE :filterText)';
     }
-   // console.log("hello");
     if (projectStatusId != 0) {
       if (filter) {
         filter = `${filter}  and dr.projectStatusId = :projectStatusId`;
@@ -128,16 +117,9 @@ export class ProjectService extends TypeOrmCrudService<Project> {
       }
     }
 
-   
-
-    // if isactive = 0 ---> all climate actions
-    // if isactive = 1 ---> active climate actions
-    // if active = 2 ---> 
-
-   
        
       if (filter) {
-        filter = `${filter}  and pas.id !=4 `; // no proposed CA s all climate
+        filter = `${filter}  and pas.id !=4 `; 
       } else {
         filter = `pas.id !=4`;
       }
@@ -175,17 +157,6 @@ export class ProjectService extends TypeOrmCrudService<Project> {
         'pas.id = dr.projectApprovalStatusId',
       )
       
-    /* 
-      .leftJoinAndMapMany(
-        'asse.parameter',
-        Parameter,
-        'para',
-        'para.assessmentId = asse.id',
-      )
-     */
-
-      //   .innerJoinAndMapOne('dr.user', User, 'u', 'dr.userId = u.id')
-
       .where(filter, {
         filterText: `%${filterText}%`,
         projectStatusId,
@@ -194,13 +165,7 @@ export class ProjectService extends TypeOrmCrudService<Project> {
         sectorId,
       })
       .orderBy('dr.createdOn', 'ASC');
-    console.log(
-      '=====================================================================',
-    );
-    //console.log(data.getQuery());
-
     let result = await paginate(data, options);
-    console.log(result);
     if (result) {
       return result;
     }
@@ -250,24 +215,16 @@ export class ProjectService extends TypeOrmCrudService<Project> {
         filter = `asse.assessmentStage = :assessmentStatusName`;
       }
     }  
-
-
-// if active = 0 ---> whole climateactions list
-// if active = 1 ---> all climate actions
-// if active = 2 ---> active climate actions
-
     if (Active == 1) {
-    // console.log(Active);
       if (filter) {
-        filter = `${filter}  and pas.id != 1 `; // no proposed CA s all climate
+        filter = `${filter}  and pas.id != 1 `; 
       } else {
         filter = `pas.id != 1`;
       }
     } 
     else if (Active == 2) {
-      //console.log(Active);
       if (filter) {
-        filter = `${filter}  and pas.id = 3 `; // only active CA s
+        filter = `${filter}  and pas.id = 3 `; 
       } else {
         filter = `pas.id = 3 `;
       }
@@ -316,7 +273,6 @@ export class ProjectService extends TypeOrmCrudService<Project> {
         'asse.projectId = dr.id',
       )
 
-      //   .innerJoinAndMapOne('dr.user', User, 'u', 'dr.userId = u.id')
 
       .where(filter, {
         filterText: `%${filterText}%`,
@@ -328,10 +284,6 @@ export class ProjectService extends TypeOrmCrudService<Project> {
         sectorId,
       })
       .orderBy('dr.createdOn', 'DESC'); 
-    // console.log(
-    //   '=====================================================================',
-   // );
-    // console.log(data.getQuery());
 
     let resualt = await paginate(data, options);
 

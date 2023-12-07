@@ -17,8 +17,6 @@ import * as ormconfig from './ormconfig';
 import { Country } from './country/entity/country.entity';
 import { NdcSet } from './master-data/ndc/ndc-set.entity';
 import { CountryModule } from './country/country.module';
-import { NdcSetService } from './master-data/ndc/ndc-set.service';
-import { NdcService } from './master-data/ndc/ndc.service';
 import { SectorModule } from './master-data/sector/sector.module';
 import { ProjectOwner } from './master-data/project-owner/projeect-owner.entity';
 
@@ -28,11 +26,9 @@ import { DocumentModule } from './document/document.module';
 
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { SectorController } from './master-data/sector/sector.controller';
 import { ProjectOwnerModule } from './master-data/project-owner/project-owner.module';
 import { ProjectStatusModule } from './master-data/project-status/project-status.module';
 import { ConfigModule } from '@nestjs/config';
-import { MitigationActionType } from './master-data/mitigation-action/mitigation-action.entity';
 import { MitigationActionModule } from './master-data/mitigation-action/mitigation-action.module';
 import { ProjectModule } from './project/project.module';
 import { MethodologyModule } from './methodology/methodology.module';
@@ -42,18 +38,12 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { InstitutionModule } from './institution/institution.module';
-// import { UserController } from './user/user.controller';
-// import { UserService } from './user/user.service';
-import { InstitutionCategoryController } from './institution/institution-category.controller';
-import { InstitutionCategoryService } from './institution/institution-category.service';
 import { UserTypeModule } from './master-data/user-type/user-type.module';
-import { EmissionReductionDraftdataService } from './master-data/emisssion-reduction-draft-data/emission-reduction-draftdata.service';
 import { EmissionReductionDraftdataController } from './master-data/emisssion-reduction-draft-data/emission-reduction-draftdata.controller';
 import { EmissionReductionDraftdataModule } from './master-data/emisssion-reduction-draft-data/emission-reduction-draftdata.module';
 import { EmissionReductioDraftDataEntity } from './master-data/emisssion-reduction-draft-data/entity/emission-reductio-draft-data.entity';
 import { LearningMaterialModule } from './learning-material/learning-material.module';
 import { SubSectorController } from './master-data/sub-sector/sub-sector.controller';
-import { SubSectorService } from './master-data/sub-sector/sub-sector.service';
 import { SubSectorModule } from './master-data/sub-sector/sub-sector.module';
 import { ReportModule } from './report/report.module';
 import { ReportController } from './report/report.controller';
@@ -62,7 +52,6 @@ import { ApplicabilityController } from './master-data/applicability/applicabili
 import { MethodologyDataModule } from './master-data/methodology-data/methodology-data.module';
 import { MethodologyDataController } from './master-data/methodology-data/methodology-data.controller';
 import { IndicatorController } from './indicator/indicator.controller';
-// import { IndicatorModule } from './indicator/indicator.module';
 import { IndicatorModule } from './master-data/indicator/indicator.module';
 
 
@@ -112,19 +101,18 @@ import { IndicatorModule } from './master-data/indicator/indicator.module';
     }),
     MailerModule.forRoot({
       transport:{
-        host: 'smtp.office365.com', 
+        host: process.env.EMAIL_HOST,  
         port:587,
        secure: false, 
        
        auth: {
-        user: "no-reply-icat-ca-tool@climatesi.com",
-        pass: "ICAT2022tool",
+        user: process.env.EMAIL,
+        pass:  process.env.EMAIL_PASSWORD,
 
       },
-        // 'smtp://janiya.rolfson49@ethereal.email:T8pnMS7xzzX7k3QSkM@ethereal.email',
       },
       defaults: {
-        from: '"Admin" <no-reply-icat-ca-tool@climatesi.com>',
+        from: process.env.EMAIL,
       },
     }),
     ServeStaticModule.forRoot({
@@ -156,8 +144,6 @@ import { IndicatorModule } from './master-data/indicator/indicator.module';
     ApplicabilityController,
 
     IndicatorController,
-    // InstitutionCategoryController,
-    // UserController,
   ],
   providers: [AppService],
 })
