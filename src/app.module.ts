@@ -101,18 +101,18 @@ import { IndicatorModule } from './master-data/indicator/indicator.module';
     }),
     MailerModule.forRoot({
       transport:{
-        host: process.env.EMAIL_HOST,  
+        host: 'smtp.office365.com', 
         port:587,
        secure: false, 
        
        auth: {
-        user: process.env.EMAIL,
-        pass:  process.env.EMAIL_PASSWORD,
+        user: "no-reply-icat-ca-tool@climatesi.com",
+        pass: "ICAT2022tool",
 
       },
       },
       defaults: {
-        from: process.env.EMAIL,
+        from: '"Admin" <no-reply-icat-ca-tool@climatesi.com>',
       },
     }),
     ServeStaticModule.forRoot({
@@ -144,6 +144,8 @@ import { IndicatorModule } from './master-data/indicator/indicator.module';
     ApplicabilityController,
 
     IndicatorController,
+    // InstitutionCategoryController,
+    // UserController,
   ],
   providers: [AppService],
 })
