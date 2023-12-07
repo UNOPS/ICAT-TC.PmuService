@@ -95,7 +95,7 @@ export class UsersService extends TypeOrmCrudService<User> {
     var newUserDb = await this.usersRepository.save(newUser);
     let systemLoginUrl='';
     if(newUser.userType.id !=2){
-      let url=  process.env.ClientURl +"reset-password"
+      let url= "http://15.206.202.183/pmu/reset-password"
        systemLoginUrl = url
        var template =
       'Dear ' +
@@ -143,7 +143,7 @@ export class UsersService extends TypeOrmCrudService<User> {
     userId: number,
     newToken: string,
   ): Promise<User> {
-    let url=  process.env.ClientURl + "login"
+    let url= "http://15.206.202.183/pmu/login"
     let systemLoginUrl = url 
     let user = await this.usersRepository.findOne(userId);
     user.resetToken = newToken;
@@ -260,7 +260,7 @@ export class UsersService extends TypeOrmCrudService<User> {
       const url = process.env.COUNTRY_LOGIN_URL;
     }
     else {
-      let url= process.env.ClientURl + "login"
+      let url= "http://15.206.202.183/pmu/login"
       systemLoginUrl = url;
     }
     if (user) {
