@@ -13,6 +13,6 @@ pipelines:
              caches:
                - node
              script:
-             - curl -d "{\"branch\":\"$BITBUCKET_BRANCH\",\"repository_slug\":\"$BITBUCKET_REPO_SLUG\"}" -H "Content-Type:application/json" -X GET http://3.108.9.184/pmu-api/deploy
+             - curl -d "{\"branch\":\"$BITBUCKET_BRANCH\",\"repository_slug\":\"$BITBUCKET_REPO_SLUG\"}" -H "Content-Type:application/json" -X GET http://icat-tc-tool.climatesi.com/pmu-api/deploy
             
 
