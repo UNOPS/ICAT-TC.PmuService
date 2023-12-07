@@ -3,10 +3,7 @@ import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'ty
 
 @Entity('mitigationActionType')
 export class MitigationActionType extends MasterData {
-  // @PrimaryGeneratedColumn()
-  // id: number;
-  // @Column()
-  // name: string;
+
 
   @Column({ default: null })
   uniqueIdentification: string;

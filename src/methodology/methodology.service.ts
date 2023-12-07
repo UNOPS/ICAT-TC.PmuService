@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Methodology } from './entity/methodology.entity';
-import { Sector } from 'src/master-data/sector/sector.entity';
 import { Country } from 'src/country/entity/country.entity';
 import { Indicator } from 'src/master-data/indicator/entities/indicator.entity';
 
@@ -36,7 +35,6 @@ export class MethodologyService extends TypeOrmCrudService<Methodology>{
         }
 
         if (developedBy != "0") {
-            console.log("dddd",developedBy)
             if (filter) {
                 filter = `${filter} and me.developedBy=:developedBy`
             }
@@ -54,7 +52,6 @@ export class MethodologyService extends TypeOrmCrudService<Methodology>{
                 indicatorId,
                 developedBy
             })
-           // .orderBy('me.createdOn', 'DESC');
 
         let resualt = await paginate(data, options);
 

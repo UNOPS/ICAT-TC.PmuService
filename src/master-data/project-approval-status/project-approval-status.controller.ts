@@ -9,9 +9,6 @@ import { ProjectApprovalStatusService } from './project-approval-status.service'
   },
   query: {
     join: {
-      //   subNdc: {
-      //     eager: true,
-      //   },
     },
   },
 })

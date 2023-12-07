@@ -1,15 +1,13 @@
 import { DocumentOwner } from './entity/document-owner.entity';
 import { editFileName, fileLocation } from './entity/file-upload.utils';
-import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { DocumentService } from './document.service';
-import { Crud, CrudController, ParsedRequest, CrudRequest } from '@nestjsx/crud';
+import { Crud, CrudController, CrudRequest } from '@nestjsx/crud';
 import { Documents } from './entity/document.entity';
 import { Controller, Post, UploadedFile, UseInterceptors, Body, Param, Req, Get, StreamableFile, Res } from '@nestjs/common';
-import { assert, log } from 'console';
 import { join } from 'path';
 import { createReadStream } from 'fs';
 var multer = require('multer')
-//var upload = multer({ dest: './public/data/uploads/' })
 
 
 @Crud({
@@ -36,7 +34,6 @@ export class DocumentController implements CrudController<Documents> {
 
     }))
     async uploadFile2(@UploadedFile() file, @Req() req: CrudRequest, @Param("oid") oid, @Param("owner") owner) {
-        console.log('+++++++++++++++++==')
         var docowner: DocumentOwner = (<any>DocumentOwner)[owner];
         let path = join(owner, oid, file.filename)
         let doc = new Documents();
@@ -45,7 +42,6 @@ export class DocumentController implements CrudController<Documents> {
         doc.fileName = file.originalname;
         doc.mimeType = file.mimetype;
         doc.relativePath = path;
-        // `${docowner}/${oid}/${file.originalname}`;
 
 
 
@@ -73,7 +69,6 @@ export class DocumentController implements CrudController<Documents> {
       let doc:Documents =await this.service.getDocument(did);
 
 
-    //   state must be inline or attachment
 
       res.set({
         'Content-Type': `${doc.mimeType}`,

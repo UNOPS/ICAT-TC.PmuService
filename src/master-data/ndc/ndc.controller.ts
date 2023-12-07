@@ -1,12 +1,11 @@
 import { Controller } from '@nestjs/common';
 import { Ndc } from './ndc.entity';
 import { NdcService } from './ndc.service';
-import { Request, Post, UseGuards } from '@nestjs/common';
+import { Request, } from '@nestjs/common';
 import {
   Crud,
   CrudController,
   Override,
-  ParsedBody,
   ParsedRequest,
   CrudRequest,
   GetManyDefaultResponse,
@@ -48,14 +47,8 @@ export class NdcController implements CrudController<Ndc> {
   ): Promise<GetManyDefaultResponse<Ndc> | Ndc[]> {
     try {
       let res = await this.base.getManyBase(req);
-      // console.log('*********************************************');
-      // console.log(res);
-      // console.log('*********************************************');
-      // console.log(req);
       return res;
     } catch (error) {
-      console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-      console.log(error);
     }
   }
 }

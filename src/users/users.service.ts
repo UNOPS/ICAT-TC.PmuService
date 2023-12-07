@@ -1,14 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { count } from 'console';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.entity';
 import * as bcript from 'bcrypt';
-import { ResetPassword } from 'src/auth/Dto/reset.password.dto';
-import { RSA_PSS_SALTLEN_MAX_SIGN } from 'constants';
 import { UserType } from './user.type.entity';
-import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { Institution } from 'src/institution/institution.entity';
 import { RecordStatus } from 'src/shared/entities/base.tracking.entity';
@@ -16,8 +12,6 @@ import { EmailNotificationService } from 'src/notifications/email.notification.s
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { Country } from 'src/country/entity/country.entity';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
-import { InstitutionCategory } from 'src/institution/institution.category.entity';
-import { InstitutionType } from 'src/institution/institution.type.entity';
 
 const { v4: uuidv4 } = require('uuid');
 
@@ -99,11 +93,10 @@ export class UsersService extends TypeOrmCrudService<User> {
     newUser.resetToken = '';
 
     var newUserDb = await this.usersRepository.save(newUser);
-    // get an environment variable
     let systemLoginUrl='';
     if(newUser.userType.id !=2){
-      let url= "http://15.206.202.183/pmu/reset-password"
-       systemLoginUrl = url//this.configService.get<string>("https://icat-ca-tool.climatesi.com/icat-country-app/");
+      let url=  process.env.ClientURl +"reset-password"
+       systemLoginUrl = url
        var template =
       'Dear ' +
       newUserDb.firstName +
@@ -150,8 +143,8 @@ export class UsersService extends TypeOrmCrudService<User> {
     userId: number,
     newToken: string,
   ): Promise<User> {
-    let url= "http://15.206.202.183/pmu/login"
-    let systemLoginUrl = url //this.configService.get<string>('LOGIN_URL');
+    let url=  process.env.ClientURl + "login"
+    let systemLoginUrl = url 
     let user = await this.usersRepository.findOne(userId);
     user.resetToken = newToken;
     let newUUID = uuidv4();
@@ -183,7 +176,6 @@ export class UsersService extends TypeOrmCrudService<User> {
   }
 
   async findAll(): Promise<User[]> {
-    console.log("urepo====",this.usersRepository.find())
     return this.usersRepository.find();
   }
 
@@ -198,28 +190,13 @@ export class UsersService extends TypeOrmCrudService<User> {
     return (await user).validatePassword(password);
   }
 
-  // findOne(id: string): Promise<User> {
-  //   return this.usersRepository.findOne(id);
-  // }
 
   async isUserAvailable(userName: string): Promise<any> {
-    // await this.usersRepository.count({username: userName}).then((value)=>{
-    //   if(value>0){
-    //     return true;
-    //   }
-    //   else{ 
-    //     return false;
-    //   }
-    // }).catch(()=>{
-    //   return false;
-    // });
     let user = await this.usersRepository.findOne({ username: userName });
     if (user) {
-      console.log('UsersService.findByUserName : true ===============');
 
       return user;
     } else {
-      console.log('UsersService.findByUserName : false ===============');
 
       return user;
     }
@@ -229,9 +206,7 @@ export class UsersService extends TypeOrmCrudService<User> {
     return await this.usersRepository
       .findOne({ username: userName })
       .then((value) => {
-        console.log(value);
         if (!!value) {
-          console.log('inside', value.id);
 
           return value.id;
         } else {
@@ -247,9 +222,7 @@ export class UsersService extends TypeOrmCrudService<User> {
     return await this.usersRepository
       .findOne({ email: email })
       .then((value) => {
-        console.log(value);
         if (!!value) {
-          console.log('inside', value.id);
 
           return value;
         } else {
@@ -257,7 +230,6 @@ export class UsersService extends TypeOrmCrudService<User> {
         }
       })
       .catch((e) => {
-        console.log('findUserByEmail error', e);
         return false;
       });
   }
@@ -271,14 +243,11 @@ export class UsersService extends TypeOrmCrudService<User> {
     token: string,
   ): Promise<boolean> {
     const user = await this.usersRepository.findOne({ email: email });
-    console.log(user);
 
     if (user && user.resetToken === token) {
-      console.log('in if ');
 
       return true;
     } else {
-      console.log('in else');
 
       return false;
     }
@@ -291,7 +260,7 @@ export class UsersService extends TypeOrmCrudService<User> {
       const url = process.env.COUNTRY_LOGIN_URL;
     }
     else {
-      let url= "http://15.206.202.183/pmu/login"
+      let url= process.env.ClientURl + "login"
       systemLoginUrl = url;
     }
     if (user) {
@@ -371,7 +340,6 @@ export class UsersService extends TypeOrmCrudService<User> {
     filterText: string,
     userTypeId: number,
   ): Promise<Pagination<User>> {
-    console.log('calling......')
     let filter: string = '';
 
     if(filterText != null && filterText != undefined && filterText != ''){
@@ -391,7 +359,6 @@ export class UsersService extends TypeOrmCrudService<User> {
     .createQueryBuilder('user')
     .leftJoinAndMapOne('user.institution', Institution, 'ins','ins.id = user.institutionId',)
     .leftJoinAndMapOne('user.userType', UserType, 'type', 'type.id = user.userTypeId',)
-    // .leftJoinAndMapOne('user.country',Country, 'con',)
 
     .where(filter, {
       filterText: `%${filterText}%`,
@@ -401,20 +368,17 @@ export class UsersService extends TypeOrmCrudService<User> {
     let resualt = await paginate(data, options);
 
     if(resualt){
-    //  console.log('reaslt...',resualt)
       return resualt;
     }
   }
 
   async findUserByUserType() {
-    console.log("sssssssss " );
     let data =await this.repo
     .createQueryBuilder('u')
     .select('*')
     .where(
       'u.userTypeId = 2'
     ).execute();
-    // console.log("sssssssss ",data.execute() );
     return data;
   }
 
