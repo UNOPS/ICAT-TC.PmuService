@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 export class EmailNotificationService {
   constructor(private readonly mailerService: MailerService) {}
 
-  from: string = 'no-reply-icat-ca-tool@climatesi.com';
+  from: string = process.env.EMAIL;
 
   async sendMail(
     to: string,
