@@ -2,7 +2,6 @@ import { Injectable, } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthCredentialDto } from './Dto/auth.credential.dto';
-import { AuditService } from 'src/audit/audit.service';
 import { UserTypeNames } from 'src/user-type/user-types-names';
 
 @Injectable()
@@ -10,7 +9,6 @@ export class  AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-    private readonly auditService: AuditService,
 
   ) {}
 

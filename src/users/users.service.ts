@@ -365,10 +365,10 @@ export class UsersService extends TypeOrmCrudService<User> {
       userTypeId,
     }).orderBy('user.status','ASC');
 
-    let resualt = await paginate(data, options);
+    let result = await paginate(data, options);
 
-    if(resualt){
-      return resualt;
+    if(result){
+      return result;
     }
   }
 

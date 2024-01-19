@@ -1,6 +1,4 @@
 import { Sector } from 'src/master-data/sector/sector.entity';
-import { BaseTrackingEntity } from 'src/shared/entities/base.tracking.entity';
-import { MasterData } from 'src/shared/entities/master.data.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
 
 @Entity({name: 'indicator'})

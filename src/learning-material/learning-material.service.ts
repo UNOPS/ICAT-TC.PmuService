@@ -104,9 +104,9 @@ export class LearningMaterialService extends TypeOrmCrudService<LearningMaterial
             
             
 
-            let resualt = await paginate(data, options);
-            if(resualt){
-                return resualt;
+            let result = await paginate(data, options);
+            if(result){
+                return result;
             }
       }
 

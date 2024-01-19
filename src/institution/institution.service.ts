@@ -50,15 +50,15 @@ export class InstitutionService extends TypeOrmCrudService<Institution> {
           filterText: `%${filterText}%`,
         })
         .orderBy('ins.status', 'ASC')
-      let resualt = await paginate(data, options);
+      let result = await paginate(data, options);
 
-      if (resualt) {
+      if (result) {
         let item = new Array()
         let re = new Array()
         let total: number
 
-        total = resualt.meta.totalItems;
-        item = await resualt.items;
+        total = result.meta.totalItems;
+        item = await result.items;
         re.push(total);
         re.push(item)
         return re;
@@ -165,10 +165,10 @@ export class InstitutionService extends TypeOrmCrudService<Institution> {
       })
       .orderBy('ins.status', 'ASC')
 
-    let resualt = await paginate(data, options);
+    let result = await paginate(data, options);
 
-    if (resualt) {
-      return resualt;
+    if (result) {
+      return result;
     }
   }
 

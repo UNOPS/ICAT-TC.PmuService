@@ -53,10 +53,10 @@ export class MethodologyService extends TypeOrmCrudService<Methodology>{
                 developedBy
             })
 
-        let resualt = await paginate(data, options);
+        let result = await paginate(data, options);
 
-        if (resualt) {
-            return resualt;
+        if (result) {
+            return result;
 
             
         }

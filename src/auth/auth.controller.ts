@@ -6,9 +6,7 @@ import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
 import { AuthCredentialDto } from './Dto/auth.credential.dto';
 import { ResetPassword } from './Dto/reset.password.dto';
-import { ForgotPasswordDto } from './Dto/forgot.passowrd.dto';
-import { EmailNotificationService } from 'src/notifications/email.notification.service';
-import { AuditService } from 'src/audit/audit.service';
+import { ForgotPasswordDto } from './Dto/forgot.passoword.dto';
 
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,12 +21,10 @@ export class AuthController {
     private authService: AuthService,
     private usersService: UsersService,
     private configService: ConfigService,
-    private emailService: EmailNotificationService,
 
     @InjectRepository(User)
     private readonly userRepo : Repository<User>,
 
-    private readonly auditService: AuditService,
 
   ) {}
 
@@ -109,7 +105,6 @@ export class AuthController {
       user.id,
       pwdRestToken,
     );
-    const resetPwdUrl = this.configService.get<string>('PWD_RESET_URL');
 
     return response.status(200).send(true);
   }

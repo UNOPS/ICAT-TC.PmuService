@@ -144,8 +144,6 @@ import { IndicatorModule } from './master-data/indicator/indicator.module';
     ApplicabilityController,
 
     IndicatorController,
-    // InstitutionCategoryController,
-    // UserController,
   ],
   providers: [AppService],
 })
