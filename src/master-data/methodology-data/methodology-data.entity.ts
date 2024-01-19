@@ -1,5 +1,4 @@
 import { BaseTrackingEntity } from 'src/shared/entities/base.tracking.entity';
-import { MasterData } from 'src/shared/entities/master.data.entity';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { ApplicabilityEntity } from '../applicability/applicability.entity';
 import { MitigationActionType } from '../mitigation-action/mitigation-action.entity';

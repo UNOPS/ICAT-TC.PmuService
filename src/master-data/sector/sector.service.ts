@@ -37,10 +37,10 @@ export class SectorService extends TypeOrmCrudService<Sector> {
       })
      .orderBy('sr.createdOn', 'DESC');
 
-    let resualt = await paginate(data, options);
+    let result = await paginate(data, options);
 
-    if (resualt) {
-      return resualt;
+    if (result) {
+      return result;
     }
   }
 

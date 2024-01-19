@@ -51,10 +51,6 @@ import { UsersService } from './users.service';
 export class UsersController implements CrudController<User> {
   constructor(
     public service: UsersService,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    @InjectRepository(Institution)
-    private readonly institutionRepository: Repository<Institution>,
 
     private readonly auditService: AuditService,
   ) {}

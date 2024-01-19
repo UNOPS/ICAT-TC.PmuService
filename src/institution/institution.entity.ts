@@ -16,9 +16,7 @@ import { InstitutionType } from './institution.type.entity';
 
 @Entity()
 export class Institution extends BaseTrackingEntity {
-  /**
-   *
-   */
+ 
   constructor() {
     super();
     this.status = 0;

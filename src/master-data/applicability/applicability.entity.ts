@@ -1,6 +1,6 @@
-import { Methodology } from 'src/methodology/entity/methodology.entity';
+
 import { MasterData } from 'src/shared/entities/master.data.entity';
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity} from 'typeorm';
 
 @Entity('applicability')
 export class ApplicabilityEntity extends MasterData {

@@ -118,9 +118,9 @@ export class AuditService extends TypeOrmCrudService<Audit> {
         institutionId
       })
       .orderBy('dr.createdOn', 'DESC');
-    let resualt = await paginate(data, options);
-    if (resualt) {
-      return resualt;
+    let result = await paginate(data, options);
+    if (result) {
+      return result;
     }
   }
 }

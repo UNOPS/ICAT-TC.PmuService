@@ -10,9 +10,7 @@ import {
 
 @Entity()
 export class Indicator extends BaseTrackingEntity {
-  /**
-   *
-   */
+
   constructor() {
     super();
     this.status = 0;

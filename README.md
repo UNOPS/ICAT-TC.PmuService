@@ -1,74 +1,107 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# TC-Tool - Main Service
 
-[travis-image]: https://api.travis-ci.org/nestjs/nest.svg?branch=master
-[travis-url]: https://travis-ci.org/nestjs/nest
-[linux-image]: https://img.shields.io/travis/nestjs/nest/master.svg?label=linux
-[linux-url]: https://travis-ci.org/nestjs/nest
-  
-  <p align="center">A progressive <a href="http://nodejs.org" target="blank">Node.js</a> framework for building efficient and scalable server-side applications, heavily inspired by <a href="https://angular.io" target="blank">Angular</a>.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/dm/@nestjs/core.svg" alt="NPM Downloads" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://api.travis-ci.org/nestjs/nest.svg?branch=master" alt="Travis" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://img.shields.io/travis/nestjs/nest/master.svg?label=linux" alt="Linux" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#5" alt="Coverage" /></a>
-<a href="https://gitter.im/nestjs/nestjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge"><img src="https://badges.gitter.im/nestjs/nestjs.svg" alt="Gitter" /></a>
-<a href="https://opencollective.com/nest#backer"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec"><img src="https://img.shields.io/badge/Donate-PayPal-dc3d53.svg"/></a>
-  <a href="https://twitter.com/nestframework"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+PMU service used to handle all pmu side services in TC tool - TC-Tool.
 
-## Description
+Supported by [Initiative for Climate Action Transparency - ICAT](https://climateactiontransparency.org/).
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Built using [Node.js 16](https://nodejs.org/dist/latest-v16.x/docs/api/) and [Nest](https://github.com/nestjs/nest) framework.
 
-## Installation
+## Database Configuration
+
+This application uses a [MySQL Database](https://www.mysql.com/). The `Pmu.sql` configuration file containing the database schema and some dummy data is provided in the root folder.
+
+## Manual Installation
+
+1. Download and install the [Node.js 16 LTS version](https://nodejs.org/en/download/releases) for your operational system.
+
+2. Download or clone this repository.
+
+3. In the terminal, go to this repository's main folder.
+
+4. Install the NPM dependencies (including Nest) with the command:
+
 
 ```bash
-$ npm install
+$ npm install --force
 ```
 
-## Running the app
+5. Set up the Environment Variables
+
+  - In the machine:
+    - **Windows:** using the `set` command in the terminal
+    - **Linux/MacOS:** using the `export` command in the terminal
+
+  - Or creating a `.env` file using `.env.example` as base
+
+6. Run the app:
 
 ```bash
-# development
 $ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
+## Google Cloud Installation with Docker
 
-## Test
+> This is an example cloud installation using [Docker](https://www.docker.com/) and Google Cloud Plataform. The provided `Dockerfile` can be used for local or cloud installation with different services.
 
-```bash
-# unit tests
-$ npm run test
+1. In GCP Console, go to [Artifact Registry](https://console.cloud.google.com/artifacts) and enable the Artifact Registry API
 
-# e2e tests
-$ npm run test:e2e
+2. In the Artifact Registry, create a new repository:
 
-# test coverage
-$ npm run test:cov
-```
+   - **Format:** Docker
+   - **Type:** Standard
+   - **Location:** desired application location
+   - **Encryption:** Google-managed key
 
-## Support
+3. Download and install [gcloud CLI](https://cloud.google.com/sdk/docs/install).
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+4. Download or clone this repository.
 
-## Stay in touch
+5. In the terminal, go to this repository's main folder.
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+6. Build your container in the Artifacts Register using the provided `Dockerfile`. The container path can be found on the Artifact Registry's repository page.
+
+  ```bash
+  $ gcloud builds submit --tag [CONTAINER PATH]
+  ```
+
+7. Go to [Cloud Run](https://console.cloud.google.com/run) and create a New Service:
+   - Choose the option `Deploy one revision from an existing container image` and select the container image updated in the previous step
+   - Add a service name
+   - Select the application region
+   - Select `Allow unauthenticated invocations` in the Authentication option
+   - In the **Container section**:
+     - Select Container port 7081
+     - Add the Environment Variables
+     - Add the Cloud SQL connections
+
+> Noticed that some [special permissions in GCP](https://cloud.google.com/run/docs/reference/iam/roles#additional-configuration) can be necessary to perform these tasks.
+
+## Environment Variables
+
+The environment variables should be declared as follow:
+
+| Variable name         | Description                                    |
+| --------------------- | ---------------------------------------------- |
+| `PORT`                | Application Port(*)                            |
+| `DATABASE_HOST`       | Database Host(*)                               |
+| `SOCKET_PATH`         | Database Socket Path(*)                        |
+| `DATABASE_PORT`       | Database Port(*)                               |
+| `DATABASE_USER`       | Database Socket User(*)                        |
+| `DATABASE_PASSWORD`   | Database Password(*)                           |
+| `DATABASE_NAME`       | Database Name(*)                               |
+| `baseUrl`             | pmu service url(*)                             |
+| `ClientURl`           | Country application url(*)                     |
+| `LOGIN_URL_COUNTRY`   | Country application url(*)                     |
+| `EMAIL`               | email for email service(*)                     |
+| `EMAIL_PASSWORD`      | email password(*)                              |
+| `EMAIL_HOST`          | email host(*)                                  |
+
+
+> (*) Can be used the Database Host or the Database Socket Path depending of the database configuration
+
+## API Documentation
+
+After the application installation, the API Documentation is available in the application URL + `/api/` with [Swagger](https://swagger.io/solutions/api-documentation/).
+
 
 ## License
 

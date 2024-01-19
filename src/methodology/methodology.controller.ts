@@ -1,6 +1,5 @@
-import { Controller, Get, Post, Query, Request} from '@nestjs/common';
+import { Controller, Get, Query, Request} from '@nestjs/common';
 import { Crud, CrudController } from '@nestjsx/crud';
-import { get, request } from 'http';
 import { Methodology } from './entity/methodology.entity';
 import { MethodologyService } from './methodology.service';
 

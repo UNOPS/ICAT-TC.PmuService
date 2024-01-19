@@ -79,10 +79,10 @@ export class ProjectService extends TypeOrmCrudService<Project> {
         editedOn,
       })
       .orderBy('dr.createdOn', 'DESC');
-    let resualt = await paginate(data, options);
+    let result = await paginate(data, options);
 
-    if (resualt) {
-      return resualt;
+    if (result) {
+      return result;
     }
   }
 
@@ -285,10 +285,10 @@ export class ProjectService extends TypeOrmCrudService<Project> {
       })
       .orderBy('dr.createdOn', 'DESC'); 
 
-    let resualt = await paginate(data, options);
+    let result = await paginate(data, options);
 
-    if (resualt) {
-      return resualt;
+    if (result) {
+      return result;
     }
   }
 }
