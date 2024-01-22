@@ -85,8 +85,8 @@ export class UsersController implements CrudController<User> {
 
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<User> {
-  let x = await this.service.findOne(id);
-    return this.service.findOne(id);
+  let x = await this.service.findOne({where:{id:Number(id)}});
+    return this.service.findOne({where:{id:Number(id)}});
   }
 
   @Get('isUserAvailable/:userName')
