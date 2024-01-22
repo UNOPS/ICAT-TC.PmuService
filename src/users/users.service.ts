@@ -128,13 +128,13 @@ export class UsersService extends TypeOrmCrudService<User> {
 
 
   async chnageStatus(userId: number, status: number): Promise<User> {
-    let user = await this.usersRepository.findOne(userId);
+    let user = await this.usersRepository.findOne({where:{id:userId}});
     user.status = status;
     return this.usersRepository.save(user);
   }
   
   async chnagePassword(userId: number, newPassword: string): Promise<User> {
-    let user = await this.usersRepository.findOne(userId);
+    let user = await this.usersRepository.findOne({where:{id:userId}});
     user.password = newPassword;
     return this.usersRepository.save(user);
   }
@@ -145,7 +145,7 @@ export class UsersService extends TypeOrmCrudService<User> {
   ): Promise<User> {
     let url=  process.env.ClientURl +  "login"
     let systemLoginUrl = url 
-    let user = await this.usersRepository.findOne(userId);
+    let user = await this.usersRepository.findOne({where:{id:userId}});
     user.resetToken = newToken;
     let newUUID = uuidv4();
     let newPassword = ('' + newUUID).substr(0, 6);
@@ -180,11 +180,11 @@ export class UsersService extends TypeOrmCrudService<User> {
   }
 
   findByUserName(userName: string): Promise<User> {
-    return this.usersRepository.findOne({ username: userName });
+    return this.usersRepository.findOne({where:{username:userName}});
   }
 
   async validateUser(userName: string, password: string): Promise<boolean> {
-    const user = await this.usersRepository.findOne({ username: userName });
+    const user = await this.usersRepository.findOne({where:{username:userName}});
 
 
     return (await user).validatePassword(password);
@@ -192,7 +192,7 @@ export class UsersService extends TypeOrmCrudService<User> {
 
 
   async isUserAvailable(userName: string): Promise<any> {
-    let user = await this.usersRepository.findOne({ username: userName });
+    let user = await this.usersRepository.findOne({where:{username:userName}});
     if (user) {
 
       return user;
@@ -204,7 +204,7 @@ export class UsersService extends TypeOrmCrudService<User> {
 
   async findUserByUserName(userName: string): Promise<any> {
     return await this.usersRepository
-      .findOne({ username: userName })
+      .findOne({where:{username:userName}})
       .then((value) => {
         if (!!value) {
 
@@ -220,7 +220,7 @@ export class UsersService extends TypeOrmCrudService<User> {
 
   async findUserByEmail(email: string): Promise<any> {
     return await this.usersRepository
-      .findOne({ email: email })
+      .findOne({where:{email:email}})
       .then((value) => {
         if (!!value) {
 
@@ -242,7 +242,7 @@ export class UsersService extends TypeOrmCrudService<User> {
     email: string,
     token: string,
   ): Promise<boolean> {
-    const user = await this.usersRepository.findOne({ email: email });
+    const user = await this.usersRepository.findOne({where:{email:email}});
 
     if (user && user.resetToken === token) {
 
@@ -255,7 +255,7 @@ export class UsersService extends TypeOrmCrudService<User> {
 
   async resetPassword(email: string, password: string,code: string): Promise<boolean> {
     let systemLoginUrl;
-    let user = await this.usersRepository.findOne({ email: email });
+    let user = await this.usersRepository.findOne({where:{email:email}});
     if (user.userType.id == 2) {
       const url = process.env.COUNTRY_LOGIN_URL;
     }
