@@ -13,7 +13,6 @@ import { Indicator } from './master-data/indicator/entities/indicator.entity';
 import { SubSector } from './master-data/sub-sector/entity/sub-sector.entity'
 import { Project } from './project/entity/project.entity';
 import { NdcModule } from './master-data/ndc/ndc.module';
-import * as ormconfig from './ormconfig';
 import { Country } from './country/entity/country.entity';
 import { NdcSet } from './master-data/ndc/ndc-set.entity';
 import { CountryModule } from './country/country.module';
