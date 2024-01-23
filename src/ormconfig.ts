@@ -4,9 +4,9 @@ const config: ConnectionOptions = {
   type: 'mysql',
   host: 'localhost',
   port: 3306,
-  username: 'root',
-  password: '1997',
-  database: 'pmu',
+  username: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE_NAME,  
 
 
 
