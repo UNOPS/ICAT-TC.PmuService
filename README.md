@@ -4,7 +4,7 @@ PMU service used to handle all pmu side services in TC tool - TC-Tool.
 
 Supported by [Initiative for Climate Action Transparency - ICAT](https://climateactiontransparency.org/).
 
-Built using [Node.js 16](https://nodejs.org/dist/latest-v16.x/docs/api/) and [Nest](https://github.com/nestjs/nest) framework.
+Built using [Node.js 20.9.0](https://nodejs.org/dist/latest-v16.x/docs/api/) and [Nest](https://github.com/nestjs/nest) framework.
 
 ## Database Configuration
 
@@ -12,7 +12,7 @@ This application uses a [MySQL Database](https://www.mysql.com/). The `Pmu.sql` 
 
 ## Manual Installation
 
-1. Download and install the [Node.js 16 LTS version](https://nodejs.org/en/download/releases) for your operational system.
+1. Download and install the [Node.js 20.9.0 LTS version](https://nodejs.org/en/download/releases) for your operational system.
 
 2. Download or clone this repository.
 
