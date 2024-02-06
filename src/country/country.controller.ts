@@ -108,4 +108,22 @@ export class CountryController implements CrudController<Country>{
 
   }
 
+  @Get('get-country')
+  async getAllCountry(
+    @Request() request,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+     @Query('filterText') insId: number,){
+
+
+      return await this.service
+      .getAllCountry(
+        {
+          limit: limit,
+          page: page,
+        },
+        insId,
+      );
+  }
+
 }
