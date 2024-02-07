@@ -125,7 +125,10 @@ export class InstitutionController implements CrudController<Institution> {
 
   }
 
-
+@Get('allIns')
+async getAllIns(){
+  return await this.service.findAll();
+}
 
   @Get('deactivateInstituion')
   async deactivateInstitution(

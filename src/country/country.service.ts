@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { Country } from './entity/country.entity';
-import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
+import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 import { Institution } from 'src/institution/institution.entity';
 
 @Injectable()
@@ -30,9 +30,17 @@ export class CountryService extends TypeOrmCrudService<Country>{
 
   }
 
+  async getActiveCountry() {
+    let data = this.repo.createQueryBuilder('cou')
+      .where(
+        `cou.isSystemUse =1`
+      );
+    return data.getMany();
+  }
+
   async getAllCountry(
     options: IPaginationOptions,
-    insId: number,) {
+    insId: number): Promise<Pagination<Country>> {
 
 
     if (insId == 0) {
@@ -43,7 +51,8 @@ export class CountryService extends TypeOrmCrudService<Country>{
           'ins',
           'cou.institution = ins.id'
         );
-        return await paginate(data, options);
+      let a = await paginate(data, options);
+      return a;
     }
     else {
       let data = this.repo.createQueryBuilder('cou')
@@ -53,10 +62,10 @@ export class CountryService extends TypeOrmCrudService<Country>{
           'ins',
           `cou.institution = ${insId}`
         );
-        return await paginate(data, options);
+      return await paginate(data, options);
     }
 
 
-   
+
   }
 }

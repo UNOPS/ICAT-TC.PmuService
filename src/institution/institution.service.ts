@@ -173,6 +173,9 @@ export class InstitutionService extends TypeOrmCrudService<Institution> {
   }
 
 
+async findAll(){
+  return this.repo.find();
+}
 
 
 

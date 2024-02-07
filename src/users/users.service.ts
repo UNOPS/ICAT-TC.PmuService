@@ -382,7 +382,15 @@ export class UsersService extends TypeOrmCrudService<User> {
     return data;
   }
 
-  
+  async findByIns(insId:number){
+    this.repo.createQueryBuilder('user')
+    .leftJoinAndMapOne(
+      'user.institution',
+      Institution,
+      'ins',
+      `user.institutionId= ${insId}`
+    )
+  }
 
 }
 
