@@ -1,4 +1,4 @@
-import { Controller, Get, Query,  } from '@nestjs/common';
+import { Controller, Get, Query, } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Crud, CrudController } from '@nestjsx/crud';
 import { Repository } from 'typeorm-next';
@@ -11,9 +11,9 @@ import { InstitutionType } from './institution.type.entity';
     },
     query: {
         join: {
-        institution: {
-            eager: true,
-         },
+            institution: {
+                eager: true,
+            },
         },
     },
 })
@@ -22,13 +22,18 @@ import { InstitutionType } from './institution.type.entity';
 export class InstitutionTypeController implements CrudController<InstitutionType>{
     constructor(public service: InstitutionTypeService,
         @InjectRepository(InstitutionType)
-        private readonly institutionTypeRepository: Repository<InstitutionType>){}
+        private readonly institutionTypeRepository: Repository<InstitutionType>) { }
 
-@Get('institutionTypeByUserType')
-async findInstitutionTypeByUserType(
-    @Query('userId') userId: number,
-): Promise<any>{
-    return await this.service
-    .getInstitutionTypesByUser(userId)
-}
+    @Get('institutionTypeByUserType')
+    async findInstitutionTypeByUserType(
+        @Query('userId') userId: number,
+    ): Promise<any> {
+        return await this.service
+            .getInstitutionTypesByUser(userId)
+    }
+
+    @Get('type')
+    async getAllCo(): Promise<any> {
+        return this.service.type()
+    }
 }

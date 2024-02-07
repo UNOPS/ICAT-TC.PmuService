@@ -38,6 +38,23 @@ export class CountryService extends TypeOrmCrudService<Country>{
     return data.getMany();
   }
 
+  async getFilter(
+    options: IPaginationOptions,
+    insId: string){
+      let filter= insId;
+      console.log(insId)
+     let data= this.repo.createQueryBuilder('country')
+      .innerJoinAndMapOne(
+        'country.institution',
+        Institution,
+        'institution',
+        'country.institution = institution.id'
+      )
+      .where(filter,{insId});
+
+      let a = await paginate(data, options);
+      return a;
+    }
 
 
   async getAllCountry(
@@ -47,7 +64,7 @@ export class CountryService extends TypeOrmCrudService<Country>{
 
     if (insId == 0) {
       let data = this.repo.createQueryBuilder('cou')
-        .leftJoinAndMapMany(
+        .innerJoinAndMapOne(
           'cou.institution',
           Institution,
           'ins',
@@ -58,7 +75,7 @@ export class CountryService extends TypeOrmCrudService<Country>{
     }
     else {
       let data = this.repo.createQueryBuilder('cou')
-        .leftJoinAndMapMany(
+        .innerJoinAndMapOne(
           'cou.institution',
           Institution,
           'ins',
@@ -69,5 +86,9 @@ export class CountryService extends TypeOrmCrudService<Country>{
 
 
 
+  }
+
+  async getAll(){
+    return this.repo.find();
   }
 }
