@@ -114,6 +114,10 @@ export class CountryController implements CrudController<Country>{
   async getCountrySector(): Promise<any> {
 
   }
+  @Get('all-co')
+  async getAllCo(): Promise<any> {
+ return this.service.getAll()
+  }
 
   @Get('get-country/:page/:limit/:insId')
   async getAllCountry(
@@ -127,6 +131,21 @@ export class CountryController implements CrudController<Country>{
           page: page,
         },
         insId,
+      );
+  }
+
+  @Get('get-bycountry/:page/:limit/:filter')
+  async getAllCountryByFilter(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Query('filter') filter: string):Promise<any> {
+    return await this.service
+      .getFilter(
+        {
+          limit: limit,
+          page: page,
+        },
+        filter,
       );
   }
 

@@ -8,39 +8,43 @@ import { InstitutionType } from './institution.type.entity';
 
 @Injectable()
 export class InstitutionTypeService extends TypeOrmCrudService<InstitutionType>{
-        constructor(@InjectRepository(InstitutionType) repo,
-        ) {
-            super(repo);
-        }
+  constructor(@InjectRepository(InstitutionType) repo,
+  ) {
+    super(repo);
+  }
 
-        async getInstitutionTypesByUser(
-            userId: number,
-          ): Promise<any>{
-            let filter: string = '';      
-        
-            if (userId != 1) {
-              if (filter) {
-                filter = `${filter}  and user.userTypeId = :userId`;
-              } else {
-                filter = `user.userTypeId = :userId`;
-              }
-            }
-        
-            let data = this.repo
-                .createQueryBuilder('itype')
-                .leftJoinAndMapOne('itype.type', Institution, 'ins', 'itype.id = ins.typeId')
-                .leftJoinAndMapOne('ins.user', User, 'user', 'ins.id = user.institutionId')
-                .leftJoinAndMapOne('user.userType', UserType, 'userType', 'userType.id = user.userTypeId')
-                
-        
-                .where(filter, {
-                  userId,
-                })
-                .orderBy('ins.createdOn', 'DESC');
-                return data;
+  async getInstitutionTypesByUser(
+    userId: number,
+  ): Promise<any> {
+    let filter: string = '';
 
-                }
-          }
+    if (userId != 1) {
+      if (filter) {
+        filter = `${filter}  and user.userTypeId = :userId`;
+      } else {
+        filter = `user.userTypeId = :userId`;
+      }
+    }
+
+    let data = this.repo
+      .createQueryBuilder('itype')
+      .leftJoinAndMapOne('itype.type', Institution, 'ins', 'itype.id = ins.typeId')
+      .leftJoinAndMapOne('ins.user', User, 'user', 'ins.id = user.institutionId')
+      .leftJoinAndMapOne('user.userType', UserType, 'userType', 'userType.id = user.userTypeId')
+
+
+      .where(filter, {
+        userId,
+      })
+      .orderBy('ins.createdOn', 'DESC');
+    return data;
+
+  }
+
+  async type() {
+   return this.repo.find({where:{id:1}})
+  }
+}
 
 
 
