@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Query, Request, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Crud, CrudController, CrudRequest, Override, ParsedBody, ParsedRequest } from '@nestjsx/crud';
 import { AuditService } from 'src/audit/audit.service';
@@ -55,7 +55,7 @@ export class CountryController implements CrudController<Country>{
 
     let coun = await this.base.updateOneBase(req, dto);
 
-   
+
     return coun;
   }
 
@@ -111,19 +111,16 @@ export class CountryController implements CrudController<Country>{
 
 
   @Get('country-sector')
-  async getCountrySector(): Promise<any>{
+  async getCountrySector(): Promise<any> {
 
   }
 
-  @Get('get-country')
+  @Get('get-country/:page/:limit/:insId')
   async getAllCountry(
-    @Request() request,
     @Query('page') page: number,
     @Query('limit') limit: number,
-     @Query('insId') insId: number,):Promise<Pagination<Country>>{
-
-
-      return await this.service
+    @Query('insId') insId: number):Promise<any> {
+    return await this.service
       .getAllCountry(
         {
           limit: limit,

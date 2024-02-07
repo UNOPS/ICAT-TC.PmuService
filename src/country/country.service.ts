@@ -38,9 +38,11 @@ export class CountryService extends TypeOrmCrudService<Country>{
     return data.getMany();
   }
 
+
+
   async getAllCountry(
     options: IPaginationOptions,
-    insId: number): Promise<Pagination<Country>> {
+    insId: number){
 
 
     if (insId == 0) {
