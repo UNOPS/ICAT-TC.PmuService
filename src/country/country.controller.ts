@@ -7,6 +7,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Repository } from 'typeorm';
 import { CountryService } from './country.service';
 import { Country } from './entity/country.entity';
+import { Pagination } from 'nestjs-typeorm-paginate';
 
 @Crud({
   model: {
@@ -102,6 +103,12 @@ export class CountryController implements CrudController<Country>{
     return await this.service.getCountry(countryId);
   }
 
+  @Get('getActiveCountry')
+  async getActiveCountry(
+  ): Promise<any> {
+    return await this.service.getActiveCountry();
+  }
+
 
   @Get('country-sector')
   async getCountrySector(): Promise<any>{
@@ -113,7 +120,7 @@ export class CountryController implements CrudController<Country>{
     @Request() request,
     @Query('page') page: number,
     @Query('limit') limit: number,
-     @Query('filterText') insId: number,){
+     @Query('insId') insId: number,):Promise<Pagination<Country>>{
 
 
       return await this.service

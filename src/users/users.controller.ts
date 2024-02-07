@@ -121,10 +121,8 @@ export class UsersController implements CrudController<User> {
 
 
 
-  @Get(
-    'AllUserDetails/userDetalils/:page/:limit/:filterText/:userTypeId',
-  )
-  async AllUserDetails(
+  @Get('AllUserDetails/userDetalils/:page/:limit/:filterText/:userTypeId' )
+  async allUserDetails(
     @Request() request,
     @Query('page') page: number,
     @Query('limit') limit: number,
@@ -142,25 +140,6 @@ export class UsersController implements CrudController<User> {
     );
   }
 
-  @Get(
-    'AllUserDetails/userDetalils/:page/:limit/:filterText/:userTypeId',
-  )
-  async getUserList(
-    @Request() request,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-    @Query('userTypeId') filterText: string,
-    @Query('userTypeId') userTypeId: number,
-  ): Promise<any>{
-    return await this.service
-    .getUserDetails(
-      {
-        limit: limit,
-        page: page,
-      },
-      filterText,
-      userTypeId,
-    );
-  }
+  
     
 }
