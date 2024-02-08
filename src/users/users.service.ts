@@ -209,7 +209,7 @@ export class UsersService extends TypeOrmCrudService<User> {
       .then((value) => {
         if (!!value) {
 
-          return value.id;
+          return value;
         } else {
           return 0;
         }

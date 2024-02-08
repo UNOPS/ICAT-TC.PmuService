@@ -19,22 +19,22 @@ export class AuditService extends TypeOrmCrudService<Audit> {
   constructor(
     @InjectRepository(Audit) repo,
     @InjectRepository(User)
-    private readonly userRepo : Repository<User>,
-     @Inject(REQUEST) private request,
- 
+    private readonly userRepo: Repository<User>,
+    @Inject(REQUEST) private request,
+
 
   ) {
     super(repo);
   }
 
   async create(auditDto: AuditDto) {
-    if(auditDto.userName!= undefined){
+    if (auditDto.userName != undefined) {
       this.contextUser = auditDto.userName;
     }
-    else{
+    else {
       this.contextUser = this.request.user.username;
     }
-    
+
 
     let user = await this.userRepo.findOne({
       where: { email: this.contextUser },
@@ -51,10 +51,10 @@ export class AuditService extends TypeOrmCrudService<Audit> {
 
     var newaudit = await this.repo.save(newAudit);
   }
- 
-  
-  
- 
+
+
+
+
 
   async getAuditDetails(
     options: IPaginationOptions,
@@ -62,7 +62,7 @@ export class AuditService extends TypeOrmCrudService<Audit> {
     userTypeId: string,
     action: string,
     editedOn: string,
-    institutionId:number
+    institutionId: number
   ): Promise<Pagination<Audit>> {
     let filter: string = '';
 
@@ -71,7 +71,7 @@ export class AuditService extends TypeOrmCrudService<Audit> {
         '(dr.userName LIKE :filterText OR dr.action LIKE :filterText OR dr.actionStatus LIKE :filterText OR dr.editedOn LIKE :filterText)';
     }
 
-    
+
     if (userTypeId != null && userTypeId != undefined && userTypeId != '') {
       if (filter) {
         filter = `${filter}  and dr.userType= :userTypeId`;
@@ -95,7 +95,7 @@ export class AuditService extends TypeOrmCrudService<Audit> {
 
     }
 
-    if (institutionId != null && institutionId != undefined ) {
+    if (institutionId != null && institutionId != undefined) {
 
 
       if (filter) {
@@ -123,4 +123,5 @@ export class AuditService extends TypeOrmCrudService<Audit> {
       return result;
     }
   }
+
 }
