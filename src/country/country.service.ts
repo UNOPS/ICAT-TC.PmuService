@@ -72,11 +72,8 @@ export class CountryService extends TypeOrmCrudService<Country>{
 
     if (insId == 0) {
       let data = this.repo.createQueryBuilder('cou')
-        .innerJoinAndMapOne(
-          'cou.institution',
-          Institution,
-          'ins',
-          'cou.countryStatus= "Active"'
+        .where(
+          'cou.isSystemUse= true'
         );
       let a = await paginate(data, options);
       return a;
