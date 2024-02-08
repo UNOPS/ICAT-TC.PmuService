@@ -76,7 +76,7 @@ export class CountryService extends TypeOrmCrudService<Country>{
           'cou.institution',
           Institution,
           'ins',
-          'cou.institution = ins.id'
+          'cou.countryStatus= "Active"'
         );
       let a = await paginate(data, options);
       return a;
@@ -87,7 +87,7 @@ export class CountryService extends TypeOrmCrudService<Country>{
           'cou.institution',
           Institution,
           'ins',
-          `cou.institution = ${insId}`
+          `cou.institution = ${insId} and cou.countryStatus= "Active"`
         );
       return await paginate(data, options);
     }
