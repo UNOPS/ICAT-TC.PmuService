@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Crud, CrudController, CrudRequest, Override, ParsedBody, ParsedRequest } from '@nestjsx/crud';
 import { AuditService } from 'src/audit/audit.service';
@@ -94,6 +94,19 @@ export class CountryController implements CrudController<Country>{
     audit.actionStatus = 'Activated';
     this.auditService.create(audit);
     return coun;
+  }
+
+
+  @UseGuards(JwtAuthGuard)
+  @Post('create')
+  async createCountry(@Body() dto: Country): Promise<any>{
+ this.service.create(dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('update')
+  async UpdateCountry(@Body() dto: Country): Promise<any>{
+ this.service.create(dto);
   }
 
   @Get('country1')
