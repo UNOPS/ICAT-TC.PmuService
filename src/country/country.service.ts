@@ -43,17 +43,26 @@ export class CountryService extends TypeOrmCrudService<Country>{
     insId: string){
       let filter= insId;
       console.log(insId)
-     let data= this.repo.createQueryBuilder('country')
-      .innerJoinAndMapOne(
-        'country.institution',
-        Institution,
-        'institution',
-        'country.institution = institution.id'
-      )
-      .where(filter,{insId});
+      if(insId != 'institution.id =undefined'){
+        let data= this.repo.createQueryBuilder('country')
+        .innerJoinAndMapOne(
+          'country.institution',
+          Institution,
+          'institution',
+          'country.institution = institution.id and country.isSystemUse=1'
+        )
+        .where(filter,{insId});
+  
+        let a = await paginate(data, options);
+        return a;
+      }
+      else{
+        let data = this.repo.find({where:{isSystemUse:1}});
+        console.log(data)
+        return data;
 
-      let a = await paginate(data, options);
-      return a;
+      }
+     
     }
 
 
@@ -90,5 +99,9 @@ export class CountryService extends TypeOrmCrudService<Country>{
 
   async getAll(){
     return this.repo.find();
+  }
+
+  async create(dto:Country){
+    this.repo.save(dto);
   }
 }
