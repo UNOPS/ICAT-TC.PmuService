@@ -17,6 +17,7 @@ import {
   CrudController,
   CrudRequest,
   Override,
+  ParsedBody,
   ParsedRequest,
 } from '@nestjsx/crud';
 import { AuditService } from 'src/audit/audit.service';
@@ -28,6 +29,7 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
+import { ReqUserDto } from './dto/req.dto';
 
 @Crud({
   model: {
@@ -53,40 +55,40 @@ export class UsersController implements CrudController<User> {
     public service: UsersService,
 
     private readonly auditService: AuditService,
-  ) {}
+  ) { }
 
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createUserDto: CreateUserDto): Promise<User> {
 
     let audit: AuditDto = new AuditDto();
-    audit.action = createUserDto.firstName +' User Created';
+    audit.action = createUserDto.firstName + ' User Created';
     audit.comment = "User Created";
     audit.actionStatus = 'Created';
     this.auditService.create(audit);
 
     return this.service.create(createUserDto);
 
- 
+
 
   }
 
   @Patch('changeStatus')
-  changeStatus( @Query('id') id:number, @Query('status') status:number): Promise<User> {
-   
-    return this.service.chnageStatus(id,status);
+  changeStatus(@Query('id') id: number, @Query('status') status: number): Promise<User> {
+
+    return this.service.chnageStatus(id, status);
   }
 
   @Get('findUserBy')
   async findUserByUserType(@Request() request): Promise<any> {
-    
+
     return await this.service.findUserByUserType();
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<User> {
-  let x = await this.service.findOne({where:{id:Number(id)}});
-    return this.service.findOne({where:{id:Number(id)}});
+    let x = await this.service.findOne({ where: { id: Number(id) } });
+    return this.service.findOne({ where: { id: Number(id) } });
   }
 
   @Get('isUserAvailable/:userName')
@@ -111,7 +113,7 @@ export class UsersController implements CrudController<User> {
 
   @Override()
   async getMany(@ParsedRequest() req: CrudRequest, @Request() req2) {
-    
+
 
     let userList = this.base.getManyBase(req);
 
@@ -121,46 +123,37 @@ export class UsersController implements CrudController<User> {
 
 
 
-  @Get(
-    'AllUserDetails/userDetalils/:page/:limit/:filterText/:userTypeId',
-  )
-  async AllUserDetails(
+  @Get('AllUserDetails/userDetalils/:page/:limit/:filterText/:userTypeId')
+  async allUserDetails(
     @Request() request,
     @Query('page') page: number,
     @Query('limit') limit: number,
     @Query('filterText') filterText: string,
     @Query('userTypeId') userTypeId: number,
-  ): Promise<any>{
+  ): Promise<any> {
     return await this.service
-    .getUserDetails(
-      {
-        limit: limit,
-        page: page,
-      },
-      filterText,
-      userTypeId,
-    );
+      .getUserDetails(
+        {
+          limit: limit,
+          page: page,
+        },
+        filterText,
+        userTypeId,
+      );
   }
 
-  @Get(
-    'AllUserDetails/userDetalils/:page/:limit/:filterText/:userTypeId',
-  )
-  async getUserList(
-    @Request() request,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-    @Query('userTypeId') filterText: string,
-    @Query('userTypeId') userTypeId: number,
-  ): Promise<any>{
-    return await this.service
-    .getUserDetails(
-      {
-        limit: limit,
-        page: page,
-      },
-      filterText,
-      userTypeId,
-    );
+  @Get('user-type/:type')
+  async getUserType(@Query('type') type: string) {
+    return await this.service.getType(type);
   }
-    
+  @Post('user-country')
+  async getUserByCountry(@Body() type: ReqUserDto) :Promise<any>{
+    return await this.service.getUserByCountry(
+      {
+        limit: type.row,
+        page: type.first,
+      },type);
+  }
+
+
 }

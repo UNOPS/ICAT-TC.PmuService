@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { Country } from './entity/country.entity';
-import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
+import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 import { Institution } from 'src/institution/institution.entity';
 
 @Injectable()
@@ -30,33 +30,65 @@ export class CountryService extends TypeOrmCrudService<Country>{
 
   }
 
+  async getActiveCountry() {
+    let data = this.repo.createQueryBuilder('cou')
+      .where(
+        `cou.isSystemUse =1`
+      );
+    return data.getMany();
+  }
+
+  async getFilter(
+    options: IPaginationOptions,
+    insId: string){
+      let filter= insId;
+      console.log(insId)
+     let data= this.repo.createQueryBuilder('country')
+      .innerJoinAndMapOne(
+        'country.institution',
+        Institution,
+        'institution',
+        'country.institution = institution.id'
+      )
+      .where(filter,{insId});
+
+      let a = await paginate(data, options);
+      return a;
+    }
+
+
   async getAllCountry(
     options: IPaginationOptions,
-    insId: number,) {
+    insId: number){
 
 
     if (insId == 0) {
       let data = this.repo.createQueryBuilder('cou')
-        .leftJoinAndMapMany(
+        .innerJoinAndMapOne(
           'cou.institution',
           Institution,
           'ins',
           'cou.institution = ins.id'
         );
-        return await paginate(data, options);
+      let a = await paginate(data, options);
+      return a;
     }
     else {
       let data = this.repo.createQueryBuilder('cou')
-        .leftJoinAndMapMany(
+        .innerJoinAndMapOne(
           'cou.institution',
           Institution,
           'ins',
           `cou.institution = ${insId}`
         );
-        return await paginate(data, options);
+      return await paginate(data, options);
     }
 
 
-   
+
+  }
+
+  async getAll(){
+    return this.repo.find();
   }
 }
