@@ -487,7 +487,7 @@ export class UsersService extends TypeOrmCrudService<User> {
 
   async update(id: number, user: User) {
     try {
-      let us =await this.repo.findOne(id);
+      let us =await this.repo.findOne({where:{id:id}});
       let co = new Country();
       co.id= user.country.id
       us.country =co;
