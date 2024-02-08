@@ -7,6 +7,7 @@ import { Institution } from 'src/institution/institution.entity';
 
 @Injectable()
 export class CountryService extends TypeOrmCrudService<Country>{
+  
   constructor(
     @InjectRepository(Country) repo,
 
@@ -90,5 +91,13 @@ export class CountryService extends TypeOrmCrudService<Country>{
 
   async getAll(){
     return this.repo.find();
+  }
+
+  async getManyFilteredCountries(filter: string): Promise<Country[]> {
+    let data = this.repo
+      .createQueryBuilder('country')
+      .where(filter,{filter})
+      .orderBy('name', 'ASC');
+      return await data.getMany()
   }
 }
