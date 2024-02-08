@@ -58,7 +58,7 @@ export class UsersController implements CrudController<User> {
   ) { }
 
   @UseGuards(JwtAuthGuard)
-  @Post()
+  @Post('create-user')
   create(@Body() createUserDto: CreateUserDto): Promise<User> {
 
     let audit: AuditDto = new AuditDto();
@@ -143,7 +143,7 @@ export class UsersController implements CrudController<User> {
   }
 
   @Get('user-type/:type')
-  async getUserType(@Query('type') type: string) {
+  async getUserType(@Query('type') type: string) :Promise<any>{
     return await this.service.getType(type);
   }
   @Post('user-country')
@@ -155,5 +155,16 @@ export class UsersController implements CrudController<User> {
       },type);
   }
 
+  @Get('filtered-users/:filter')
+  async getFilteredUsers(
+    @Param('filter') filter: string,
+  ): Promise<any> {
+    return await this.service.getFilteredUsers(filter);
+  }
+  @Patch('update-one-user/:id')
+  async updateOneUser(@Param('id') id: number, @Body() user: User) {
+   
+    return await this.service.update(id, user);
+  }
 
 }

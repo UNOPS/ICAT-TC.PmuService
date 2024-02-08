@@ -197,5 +197,12 @@ async getAllIns(){
 
   }
 
+  @Get('get-filtered-institutions')
+  async getFilteredInstitution(
+    @Query('filter') filter: string,
+  ): Promise<any> {
+    return await this.service.getFilteredInstitution(filter);
+  }
+
 
 }

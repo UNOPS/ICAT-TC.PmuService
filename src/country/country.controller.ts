@@ -161,5 +161,9 @@ export class CountryController implements CrudController<Country>{
         filter,
       );
   }
+  @Get('get-many-filtered-countries')
+  async getManyFilteredCountries( @Query('filter') filter: string,): Promise< Country[]> {
+    return await this.service.getManyFilteredCountries(filter)
+  }
 
 }
