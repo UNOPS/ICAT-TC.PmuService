@@ -33,7 +33,7 @@ export class CountryService extends TypeOrmCrudService<Country>{
   async getActiveCountry() {
     let data = this.repo.createQueryBuilder('cou')
       .where(
-        `cou.isSystemUse =1`
+        `cou.isSystemUse =true`
       );
     return data.getMany();
   }
@@ -49,7 +49,7 @@ export class CountryService extends TypeOrmCrudService<Country>{
           'country.institution',
           Institution,
           'institution',
-          'country.institution = institution.id and country.isSystemUse=1'
+          'country.institution = institution.id and country.isSystemUse=true'
         )
         .where(filter,{insId});
   
@@ -57,8 +57,7 @@ export class CountryService extends TypeOrmCrudService<Country>{
         return a;
       }
       else{
-        let data = this.repo.find({where:{isSystemUse:1}});
-        console.log(data)
+        let data = this.repo.find({where:{isSystemUse:true}});
         return data;
 
       }
