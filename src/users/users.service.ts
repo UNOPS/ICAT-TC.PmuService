@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -35,39 +35,46 @@ export class UsersService extends TypeOrmCrudService<User> {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-
-    let userType = await this.usersTypeRepository.findOne(
-      createUserDto.userType['id'],
+    let userType = await this.usersTypeRepository.findOne({
+      where:{id:createUserDto.userType}
+    }
     );
     let countryId = null;
     let insId = null;
-    if (createUserDto.userType['id'] == 3) {
+    if (createUserDto.userType == 3) {
       countryId = null;
-      insId = createUserDto.institution['id'];
+      insId = createUserDto.institution;
     }
-    else if (createUserDto.userType['id'] == 2) {
-      countryId = createUserDto.country['id'];
+    else if (createUserDto.userType == 2) {
+      countryId = createUserDto.country;
       insId = 0;
-      let cou = await this.countryRepo.findOne(countryId);
+      let cou = await this.countryRepo.findOne({
+        where:{
+          id:countryId
+        }
+      });
       cou.isCA = true;
       this.countryRepo.save(cou)
     }
 
-    else if (createUserDto.userType['id'] == 1) {
+    else if (createUserDto.userType == 1) {
       countryId = null;
-      insId = createUserDto.institution['id'];
+      insId = createUserDto.institution;
     }
 
-    else if (createUserDto.userType['id'] == 5) {
+    else if (createUserDto.userType == 5) {
       countryId = null;
-      insId = createUserDto.institution['id'];
+      insId = createUserDto.institution;
     }
-
-
-    let institution = await this.institutionRepository.findOne(
-      insId
-    );
-    let country = await this.countryRepo.findOne(countryId);
+    let institution = await this.institutionRepository.findOne({
+      where:{id:insId}
+      
+      });
+    let country = await this.countryRepo.findOne({
+      where:{
+        id:countryId
+      }
+    });
 
     let newUser = new User();
 
@@ -409,7 +416,7 @@ export class UsersService extends TypeOrmCrudService<User> {
       return filter;
     }
     else{
-      await this.usersTypeRepository.find();
+      return await this.usersTypeRepository.find();
     }
   }
 
@@ -451,5 +458,51 @@ export class UsersService extends TypeOrmCrudService<User> {
       return await paginate(data, options);
     }
   }
+
+  async getFilteredUsers(filter: string): Promise<any> {
+    let data = this.repo
+      .createQueryBuilder('user')
+      .leftJoinAndMapOne(
+        'user.userType',
+        UserType,
+        'userType',
+        'userType.id=user.userTypeId'
+      ) 
+       .leftJoinAndMapOne(
+        'user.institution',
+        Institution,
+        'institution',
+        'institution.id=user.institutionId'
+      )
+      .leftJoinAndMapOne(
+        'user.country',
+        Country,
+        'country',
+        'country.id=user.countryId'
+      )
+      .where(filter,{filter})
+      .orderBy('user.id', 'DESC');
+    return await data.getMany()
+  }
+
+  async update(id: number, user: User) {
+    try {
+      let us =await this.repo.findOne(id);
+      let co = new Country();
+      co.id= user.country.id
+      us.country =co;
+      us.firstName =user.firstName;
+      us.lastName =user.lastName;
+      us.mobile =user.mobile;
+      us.telephone = user.telephone;
+      return await this.repo.update({ id: id }, us);
+    } catch (err) {
+      throw new InternalServerErrorException(err);
+    }
+  }
+  async saveOneUser(user:User){
+
+  }
+
 }
 

@@ -7,6 +7,7 @@ import { Institution } from 'src/institution/institution.entity';
 
 @Injectable()
 export class CountryService extends TypeOrmCrudService<Country>{
+  
   constructor(
     @InjectRepository(Country) repo,
 
@@ -42,7 +43,6 @@ export class CountryService extends TypeOrmCrudService<Country>{
     options: IPaginationOptions,
     insId: string){
       let filter= insId;
-      console.log(insId)
       if(insId != 'institution.id =undefined'){
         let data= this.repo.createQueryBuilder('country')
         .innerJoinAndMapOne(
@@ -101,6 +101,13 @@ export class CountryService extends TypeOrmCrudService<Country>{
   }
 
   async create(dto:Country){
-    this.repo.save(dto);
+    this.repo.save(dto);}
+    
+  async getManyFilteredCountries(filter: string): Promise<Country[]> {
+    let data = this.repo
+      .createQueryBuilder('country')
+      .where(filter,{filter})
+      .orderBy('name', 'ASC');
+      return await data.getMany()
   }
 }
