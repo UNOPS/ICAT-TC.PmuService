@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Crud, CrudController, CrudRequest, Override, ParsedBody, ParsedRequest } from '@nestjsx/crud';
 import { AuditService } from 'src/audit/audit.service';
@@ -7,6 +7,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Repository } from 'typeorm';
 import { CountryService } from './country.service';
 import { Country } from './entity/country.entity';
+import { Pagination } from 'nestjs-typeorm-paginate';
 
 @Crud({
   model: {
@@ -54,7 +55,7 @@ export class CountryController implements CrudController<Country>{
 
     let coun = await this.base.updateOneBase(req, dto);
 
-   
+
     return coun;
   }
 
@@ -95,6 +96,19 @@ export class CountryController implements CrudController<Country>{
     return coun;
   }
 
+
+  @UseGuards(JwtAuthGuard)
+  @Post('create')
+  async createCountry(@Body() dto: Country): Promise<any>{
+ this.service.create(dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('update')
+  async UpdateCountry(@Body() dto: Country): Promise<any>{
+ this.service.create(dto);
+  }
+
   @Get('country1')
   async getCountry(
     @Query('countryId') countryId: number,
@@ -102,10 +116,54 @@ export class CountryController implements CrudController<Country>{
     return await this.service.getCountry(countryId);
   }
 
+  @Get('getActiveCountry')
+  async getActiveCountry(
+  ): Promise<any> {
+    return await this.service.getActiveCountry();
+  }
+
 
   @Get('country-sector')
-  async getCountrySector(): Promise<any>{
+  async getCountrySector(): Promise<any> {
 
+  }
+  @Get('all-co')
+  async getAllCo(): Promise<any> {
+ return this.service.getAll()
+  }
+
+  @Get('get-country/:page/:limit/:insId')
+  async getAllCountry(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Query('insId') insId: number):Promise<any> {
+    return await this.service
+      .getAllCountry(
+        {
+          limit: limit,
+          page: page,
+        },
+        insId,
+      );
+  }
+
+  @Get('get-bycountry/:page/:limit/:filter')
+  async getAllCountryByFilter(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Query('filter') filter: string):Promise<any> {
+    return await this.service
+      .getFilter(
+        {
+          limit: limit,
+          page: page,
+        },
+        filter,
+      );
+  }
+  @Get('get-many-filtered-countries')
+  async getManyFilteredCountries( @Query('filter') filter: string,): Promise< Country[]> {
+    return await this.service.getManyFilteredCountries(filter)
   }
 
 }

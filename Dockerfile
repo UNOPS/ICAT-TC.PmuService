@@ -2,7 +2,7 @@
 # BUILD FOR LOCAL DEVELOPMENT
 ###################
 
-FROM node:20.9.0 As development
+FROM public.ecr.aws/docker/library/node:20.9.0-alpine  As development
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 # Create app directory
 WORKDIR /usr/src/app
@@ -25,7 +25,7 @@ USER node
 # BUILD FOR PRODUCTION
 ###################
 
-FROM node:20.9.0  As build
+FROM public.ecr.aws/docker/library/node:20.9.0-alpine  As build
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 
 WORKDIR /usr/src/app
@@ -52,7 +52,7 @@ USER node
 # PRODUCTION
 ###################
 
-FROM node:20.9.0 As production
+FROM public.ecr.aws/docker/library/node:20.9.0-alpine  As production
 
 
 

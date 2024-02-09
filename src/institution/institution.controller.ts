@@ -125,7 +125,10 @@ export class InstitutionController implements CrudController<Institution> {
 
   }
 
-
+@Get('allIns')
+async getAllIns(){
+  return await this.service.findAll();
+}
 
   @Get('deactivateInstituion')
   async deactivateInstitution(
@@ -192,6 +195,13 @@ export class InstitutionController implements CrudController<Institution> {
 
     return institution;
 
+  }
+
+  @Get('get-filtered-institutions')
+  async getFilteredInstitution(
+    @Query('filter') filter: string,
+  ): Promise<any> {
+    return await this.service.getFilteredInstitution(filter);
   }
 
 
