@@ -61,11 +61,11 @@ import { IndicatorModule } from './master-data/indicator/indicator.module';
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.DATABASE_HOST,
-      port: Number(process.env.DATABASE_PORT),
-      username: process.env.DATABASE_USER,
-      password: process.env.DATABASE_PASSWORD,
-      database: process.env.DATABASE_NAME,
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'pradeep123#',
+      database: 'tc_pmu',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: false,
     }),
@@ -111,13 +111,13 @@ import { IndicatorModule } from './master-data/indicator/indicator.module';
     
     MailerModule.forRoot({
       transport:{
-        host: process.env.EMAIL_HOST, 
+        host: 'smtp.office365.com', 
         port:587,
        secure: false, 
        
        auth: {
-        user: process.env.EMAIL,
-          pass:  process.env.EMAIL_PASSWORD,
+        user: "no-reply-icat-ca-tool@climatesi.com",
+        pass: "ICAT2022tool",
 
       },
       },
