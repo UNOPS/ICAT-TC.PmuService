@@ -107,10 +107,10 @@ export class UsersService extends TypeOrmCrudService<User> {
       let url = process.env.ClientURl + "reset-password"
       systemLoginUrl = url
       var template =
-        'Dear ' + newUserDb.firstName+ " " + newUserDb.lastName +','+
-        '<br/> <br/>Your username is : ' + newUserDb.email +
+        'Dear ' + newUserDb.firstName+ " " + newUser.lastName +','+
+        '<br/> <br/>Your username is : ' + newUser.email +
         ' <br/> your login code is : ' + newPassword +
-        '<br/> <br/>To log in to the system, please visit the following URL:' + ' <a href="' + systemLoginUrl + '">' + "Reset Password" + '</a>.' +
+        '<br/> <br/>To log in to the system, please visit the following URL :' + ' <a href="' + systemLoginUrl + '">' + " Reset password" + '</a>.' +
         '<br/>' +
         '<br/>Best regards,' +
         '<br/>Software support team';
@@ -165,7 +165,7 @@ export class UsersService extends TypeOrmCrudService<User> {
       '<br/><br/>Your username is :' + user.email +
       '<br/> your login password is : ' + newPassword +
 
-        ' <br/><br/>To log in to the system, please visit the following URL : ' + '<a href="' +systemLoginUrl+'">' + "System Login" +'</a>' +'.'
+        ' <br/><br/>To log in to the system, please visit the following URL : ' + '<a href="' +systemLoginUrl+'">' + "System login" +'</a>' +'.'
       +'<br/>' +
         '<br/>Best regards,' +
         '<br/>Software support team';
@@ -284,7 +284,7 @@ export class UsersService extends TypeOrmCrudService<User> {
           '<br/><br/>Your username is : ' + user.email +
           '<br/> your login password is : ' + password +
     
-          ' <br/><br/>To log in to the system, please visit the following URL : ' + '<a href="' +systemLoginUrl+'">' + "System Login" +'</a>' +'.'
+          ' <br/><br/>To log in to the system, please visit the following URL : ' + '<a href="' +systemLoginUrl+'">' + "System login" +'</a>' +'.'
           +'<br/>' +
             '<br/>Best regards,' +
             '<br/>Software support team';
@@ -314,7 +314,7 @@ export class UsersService extends TypeOrmCrudService<User> {
         'Dear ' + user.firstName + " " + user.lastName + ","+
         '<br/><br/>Your username is : ' + user.email +
         '<br/> your login password is : ' + password +
-         ' <br/><br/>To log in to the system, please visit the following URL : ' + '<a href="' +systemLoginUrl+'">' + "System Login" +'</a>' +'.'
+         ' <br/><br/>To log in to the system, please visit the following URL : ' + '<a href="' +systemLoginUrl+'">' + "System login" +'</a>' +'.'
           +'<br/>' +
             '<br/>Best regards,' +
             '<br/>Software support team';
