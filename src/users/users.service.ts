@@ -101,26 +101,22 @@ export class UsersService extends TypeOrmCrudService<User> {
     newUser.resetToken = '';
 
     var newUserDb = await this.usersRepository.save(newUser);
+    console.log(newUserDb)
     let systemLoginUrl = '';
     if (newUser.userType.id != 2) {
       let url = process.env.ClientURl + "reset-password"
       systemLoginUrl = url
       var template =
-        'Dear ' +
-        newUserDb.firstName +
-        ' ' +
-        newUserDb.lastName +
-        ' <br/>Your username is : ' +
-        newUserDb.email +
-        ' <br/> your login code is : ' +
-        newPassword +
-        ' <br/>System login url is :' + ' <a href="' + systemLoginUrl + '">' + systemLoginUrl + '</a>' +
+        'Dear ' + newUserDb.firstName+ " " + newUserDb.lastName +','+
+        '<br/> <br/>Your username is : ' + newUserDb.email +
+        ' <br/> your login code is : ' + newPassword +
+        '<br/> <br/>To log in to the system, please visit the following URL:' + ' <a href="' + systemLoginUrl + '">' + "Reset Password" + '</a>.' +
         '<br/>' +
-        '<br/>Best regards' +
+        '<br/>Best regards,' +
         '<br/>Software support team';
       this.emaiService.sendMail(
         newUserDb.email,
-        'Your credentials for ICAT system',
+        'Your credentials for TC toolkit',
         '',
         template,
       );
@@ -165,17 +161,18 @@ export class UsersService extends TypeOrmCrudService<User> {
     this.usersRepository.save(user);
 
     var template =
-      'Dear ' + user.firstName + " " + user.lastName +
-      ' <br/>Your username is ' +
-      user.email +
-      '<br/> your login password is : ' +
-      newPassword +
-      ' <br/>System login url is ' + '<a href="systemLoginUrl">' +
-      systemLoginUrl;
+      'Dear ' + user.firstName + " " + user.lastName + ","+
+      '<br/><br/>Your username is :' + user.email +
+      '<br/> your login password is : ' + newPassword +
+
+        ' <br/><br/>To log in to the system, please visit the following URL : ' + '<a href="' +systemLoginUrl+'">' + "System Login" +'</a>' +'.'
+      +'<br/>' +
+        '<br/>Best regards,' +
+        '<br/>Software support team';
 
     this.emaiService.sendMail(
       user.email,
-      'Your credentials for ICAT system',
+      'Your credentials for TC toolkit',
       '',
       template,
     );
@@ -283,19 +280,20 @@ export class UsersService extends TypeOrmCrudService<User> {
           );
           await this.usersRepository.save(user);
           var template =
-            'Dear ' + user.firstName + " " + user.lastName +
-            ' <br/>Your username is ' +
-            user.email +
-            '<br/> your login password is : ' +
-            password +
-            ' <br/>System login url is ' + '<a href="systemLoginUrl">' +
-            systemLoginUrl;
-
-          this.emaiService.sendMail(
-            user.email,
-            'Your credentials for ICAT system',
-            '',
-            template,
+          'Dear ' + user.firstName + " " + user.lastName + ","+
+          '<br/><br/>Your username is : ' + user.email +
+          '<br/> your login password is : ' + password +
+    
+          ' <br/><br/>To log in to the system, please visit the following URL : ' + '<a href="' +systemLoginUrl+'">' + "System Login" +'</a>' +'.'
+          +'<br/>' +
+            '<br/>Best regards,' +
+            '<br/>Software support team';
+    
+        this.emaiService.sendMail(
+          user.email,
+          'Your credentials for TC toolkit',
+          '',
+          template,
           );
 
           return true;
@@ -313,20 +311,20 @@ export class UsersService extends TypeOrmCrudService<User> {
         );
         await this.usersRepository.save(user);
         var template =
-          'Dear ' + user.firstName + " " + user.lastName +
-          ' <br/>Your username is ' +
-          user.email +
-          '<br/> your login password is : ' +
-          password +
-          ' <br/>System login url is ' + '<a href="systemLoginUrl">' +
-          systemLoginUrl;
+        'Dear ' + user.firstName + " " + user.lastName + ","+
+        '<br/><br/>Your username is : ' + user.email +
+        '<br/> your login password is : ' + password +
+         ' <br/><br/>To log in to the system, please visit the following URL : ' + '<a href="' +systemLoginUrl+'">' + "System Login" +'</a>' +'.'
+          +'<br/>' +
+            '<br/>Best regards,' +
+            '<br/>Software support team';
 
-        this.emaiService.sendMail(
-          user.email,
-          'Your credentials for ICAT system',
-          '',
-          template,
-        );
+          this.emaiService.sendMail(
+            user.email,
+            'Your credentials for TC toolkit',
+            '',
+            template,
+            );
 
         return true;
       }
@@ -403,7 +401,7 @@ export class UsersService extends TypeOrmCrudService<User> {
 
   async getType(type: string) {
     let filter = [];
-    if (type == "PMU Admin" || type == "PMU User") {
+    if (type == "PMU admin" || type == "PMU user") {
       let data = await this.usersTypeRepository.find();
       for (let a of data) {
         if (a.id == 2) {
