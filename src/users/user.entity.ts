@@ -75,8 +75,11 @@ export class User extends BaseTrackingEntity {
   password: string;
 
   @Exclude()
-  @Column()
+  @Column({ nullable: true })
   resetToken: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  resetTokenExpiration: Date;
 
   @DeleteDateColumn()
   deletedAt?: Date;
