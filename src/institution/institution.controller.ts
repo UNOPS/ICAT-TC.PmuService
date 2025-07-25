@@ -17,6 +17,8 @@ import { Repository } from 'typeorm';
 import { AuditService } from 'src/audit/audit.service';
 import { AuditDto } from 'src/audit/dto/audit-dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard, Roles } from 'src/auth/guards/roles.guard';
+import { UserTypeNames } from 'src/user-type/user-types-names';
 import { REQUEST } from '@nestjs/core';
 
 @Crud({
@@ -71,10 +73,12 @@ export class InstitutionController implements CrudController<Institution> {
     return this;
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.PMUUser, UserTypeNames.CountryAdmin)
   @Get(
     'institution/institutioninfo/:page/:limit/:filterText/:countryId',
   )
-  async getInstiDetails(
+  async getInstitutionDetails(
     @Request() request,
     @Query('page') page: number,
     @Query('limit') limit: number,
@@ -92,21 +96,24 @@ export class InstitutionController implements CrudController<Institution> {
     )
 
   }
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.PMUUser, UserTypeNames.CountryAdmin)
   @Get(
-    'institution/institutiId',
+    'institution/institutionId',
   )
-  async getInstitutionDetails(
+  async getInstitutionById(
     @Request() request,
     @Query('countryId') insId: number,
   ): Promise<any> {
     return await this.service.getInstitution(
       insId
     )
-
   }
 
 
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserTypeNames.PMUAdmin)
   @Get(
     'institution/institutioninfopmu',
   )
@@ -125,19 +132,24 @@ export class InstitutionController implements CrudController<Institution> {
 
   }
 
-@Get('allIns')
-async getAllIns(){
-  return await this.service.findAll();
-}
-
-  @Get('deactivateInstituion')
-  async deactivateInstitution(
-    @Query('instiId') instiId: number,
-  ): Promise<any> {
-    return await this.service.softDelete(instiId);
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.PMUUser, UserTypeNames.CountryAdmin)
+  @Get('allIns')
+  async getAllIns() {
+    return await this.service.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserTypeNames.PMUAdmin)
+  @Get('deactivateInstitution')
+  async deactivateInstitution(
+    @Query('institutionId') institutionId: number,
+  ): Promise<any> {
+    return await this.service.softDelete(institutionId);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.CountryAdmin)
   @Override()
   async createOne(
     @Request() request,
@@ -170,8 +182,9 @@ async getAllIns(){
     return institution;
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.CountryAdmin)
   @Override()
-  @UseGuards(JwtAuthGuard)
   async updateOne(
     @Request() request,
     @ParsedRequest() req: CrudRequest,
@@ -180,11 +193,11 @@ async getAllIns(){
 
 
     let institution = await this.base.updateOneBase(req, dto);
-    let newco= new Array();
+    let newco = new Array();
     for (let n of dto.countries) {
       newco.push(n.id)
     }
-  
+
 
     let audit: AuditDto = new AuditDto();
     audit.action = institution.name + " Institution Updated";
@@ -197,12 +210,12 @@ async getAllIns(){
 
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.PMUUser, UserTypeNames.CountryAdmin)
   @Get('get-filtered-institutions')
   async getFilteredInstitution(
     @Query('filter') filter: string,
   ): Promise<any> {
     return await this.service.getFilteredInstitution(filter);
   }
-
-
 }
