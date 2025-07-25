@@ -13,10 +13,14 @@ import { InstitutionCategoryController } from './institution-category.controller
 import { Country } from 'src/country/entity/country.entity';
 import { AuditService } from 'src/audit/audit.service';
 import { Audit } from 'src/audit/entity/audit.entity';
+import { AuthModule } from 'src/auth/auth.module';
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Institution, User,InstitutionType, InstitutionCategory,Country,Audit])],
+  imports: [
+    TypeOrmModule.forFeature([Institution, User,InstitutionType, InstitutionCategory,Country,Audit]),
+    AuthModule
+  ],
   providers: [InstitutionService, InstitutionTypeService, InstitutionCategoryService,AuditService],
   controllers: [InstitutionController, InstitutionTypeController, InstitutionCategoryController],
   exports: [InstitutionService, InstitutionTypeService, InstitutionCategoryService,AuditService],
