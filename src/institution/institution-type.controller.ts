@@ -28,7 +28,7 @@ export class InstitutionTypeController implements CrudController<InstitutionType
         private readonly institutionTypeRepository: Repository<InstitutionType>) { }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(UserTypeNames.PMUAdmin, UserTypeNames.PMUUser, UserTypeNames.CountryAdmin)
+    @Roles(UserTypeNames.PMUAdmin, UserTypeNames.ICATAdmin)
     @Get('institutionTypeByUserType')
     async findInstitutionTypeByUserType(
         @Query('userId') userId: number,
@@ -38,7 +38,7 @@ export class InstitutionTypeController implements CrudController<InstitutionType
     }
 
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(UserTypeNames.PMUAdmin, UserTypeNames.PMUUser, UserTypeNames.CountryAdmin)
+    @Roles(UserTypeNames.PMUAdmin, UserTypeNames.ICATAdmin)
     @Get('type')
     async getAllCo(): Promise<any> {
         return this.service.type()

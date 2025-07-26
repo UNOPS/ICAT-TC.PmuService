@@ -74,7 +74,7 @@ export class InstitutionController implements CrudController<Institution> {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.PMUUser, UserTypeNames.CountryAdmin)
+  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.ICATAdmin)
   @Get(
     'institution/institutioninfo/:page/:limit/:filterText/:countryId',
   )
@@ -97,7 +97,7 @@ export class InstitutionController implements CrudController<Institution> {
 
   }
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.PMUUser, UserTypeNames.CountryAdmin)
+  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.ICATAdmin)
   @Get(
     'institution/institutionId',
   )
@@ -133,7 +133,7 @@ export class InstitutionController implements CrudController<Institution> {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.PMUUser, UserTypeNames.CountryAdmin)
+  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.ICATAdmin)
   @Get('allIns')
   async getAllIns() {
     return await this.service.findAll();
@@ -149,7 +149,7 @@ export class InstitutionController implements CrudController<Institution> {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.CountryAdmin)
+  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.ICATAdmin)
   @Override()
   async createOne(
     @Request() request,
@@ -183,7 +183,7 @@ export class InstitutionController implements CrudController<Institution> {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.CountryAdmin)
+  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.ICATAdmin)
   @Override()
   async updateOne(
     @Request() request,
@@ -211,7 +211,7 @@ export class InstitutionController implements CrudController<Institution> {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.PMUUser, UserTypeNames.CountryAdmin)
+  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.ICATAdmin)
   @Get('get-filtered-institutions')
   async getFilteredInstitution(
     @Query('filter') filter: string,
