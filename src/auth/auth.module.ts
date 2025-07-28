@@ -16,7 +16,6 @@ import { User } from 'src/users/user.entity';
 import { Country } from 'src/country/entity/country.entity';
 import { Audit } from 'src/audit/entity/audit.entity';
 import { AuditService } from 'src/audit/audit.service';
-import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
@@ -35,9 +34,8 @@ import { RolesGuard } from './guards/roles.guard';
     UsersService,
     ConfigService,
     AuditService,
-    RolesGuard
   ],
-  exports: [AuthService, RolesGuard],
+  exports: [AuthService],
   controllers: [AuthController],
 })
 export class AuthModule {}
