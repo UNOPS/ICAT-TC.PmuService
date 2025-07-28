@@ -17,8 +17,6 @@ import { Repository } from 'typeorm';
 import { AuditService } from 'src/audit/audit.service';
 import { AuditDto } from 'src/audit/dto/audit-dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard, Roles } from 'src/auth/guards/roles.guard';
-import { UserTypeNames } from 'src/user-type/user-types-names';
 import { REQUEST } from '@nestjs/core';
 
 @Crud({
@@ -73,10 +71,9 @@ export class InstitutionController implements CrudController<Institution> {
     return this;
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.PMUUser, UserTypeNames.CountryAdmin)
+  @UseGuards(JwtAuthGuard)
   @Get(
-    'institution/institutioninfo/:page/:limit/:filterText/:countryId',
+    'get-institution/:page/:limit/:filterText/:countryId',
   )
   async getInstitutionDetails(
     @Request() request,
@@ -96,10 +93,9 @@ export class InstitutionController implements CrudController<Institution> {
     )
 
   }
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.PMUUser, UserTypeNames.CountryAdmin)
+  @UseGuards(JwtAuthGuard)
   @Get(
-    'institution/institutionId',
+    'institutionId',
   )
   async getInstitutionById(
     @Request() request,
@@ -112,10 +108,9 @@ export class InstitutionController implements CrudController<Institution> {
 
 
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserTypeNames.PMUAdmin)
+  @UseGuards(JwtAuthGuard)
   @Get(
-    'institution/institutioninfopmu',
+    'institutioninfopmu',
   )
   async getPmuAdminAssignInstitution(
     @Request() request,
@@ -132,15 +127,13 @@ export class InstitutionController implements CrudController<Institution> {
 
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.PMUUser, UserTypeNames.CountryAdmin)
+  @UseGuards(JwtAuthGuard)
   @Get('allIns')
   async getAllIns() {
     return await this.service.findAll();
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserTypeNames.PMUAdmin)
+  @UseGuards(JwtAuthGuard)
   @Get('deactivateInstitution')
   async deactivateInstitution(
     @Query('institutionId') institutionId: number,
@@ -148,8 +141,7 @@ export class InstitutionController implements CrudController<Institution> {
     return await this.service.softDelete(institutionId);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.CountryAdmin)
+  @UseGuards(JwtAuthGuard)
   @Override()
   async createOne(
     @Request() request,
@@ -182,8 +174,7 @@ export class InstitutionController implements CrudController<Institution> {
     return institution;
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.CountryAdmin)
+  @UseGuards(JwtAuthGuard)
   @Override()
   async updateOne(
     @Request() request,
@@ -210,8 +201,7 @@ export class InstitutionController implements CrudController<Institution> {
 
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserTypeNames.PMUAdmin, UserTypeNames.PMUUser, UserTypeNames.CountryAdmin)
+  @UseGuards(JwtAuthGuard)
   @Get('get-filtered-institutions')
   async getFilteredInstitution(
     @Query('filter') filter: string,
