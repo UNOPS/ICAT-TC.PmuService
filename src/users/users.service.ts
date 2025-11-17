@@ -365,6 +365,7 @@ export class UsersService extends TypeOrmCrudService<User> {
       .createQueryBuilder('user')
       .leftJoinAndMapOne('user.institution', Institution, 'ins', 'ins.id = user.institutionId',)
       .leftJoinAndMapOne('user.userType', UserType, 'type', 'type.id = user.userTypeId',)
+      .leftJoinAndMapOne('user.country', Country, 'country', 'country.id = user.countryId',)
 
       .where(filter, {
         filterText: `%${filterText}%`,
@@ -422,7 +423,7 @@ export class UsersService extends TypeOrmCrudService<User> {
     if(type){
       let filter: string = '';
       filter = type.andoprator 
-      if(type.oroprator){filter+  " and "+type.oroprator;}
+      if(type.oroprator){filter +=  " and "+type.oroprator;}
       let data =this.repo.createQueryBuilder('user')
       .leftJoinAndMapOne(
         'user.userType',
@@ -435,6 +436,12 @@ export class UsersService extends TypeOrmCrudService<User> {
         Institution,
         'institution',
         'institution.id=user.institutionId'
+      )
+      .leftJoinAndMapOne(
+        'user.country',
+        Country,
+        'country',
+        'country.id=user.countryId'
       )
       .where(filter,{type} );
       return await paginate(data, options);
@@ -452,6 +459,12 @@ export class UsersService extends TypeOrmCrudService<User> {
         Institution,
         'institution',
         'institution.id=user.institutionId'
+      )
+      .leftJoinAndMapOne(
+        'user.country',
+        Country,
+        'country',
+        'country.id=user.countryId'
       )
       return await paginate(data, options);
     }
