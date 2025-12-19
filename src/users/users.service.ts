@@ -36,44 +36,37 @@ export class UsersService extends TypeOrmCrudService<User> {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     let userType = await this.usersTypeRepository.findOne({
-      where:{id:createUserDto.userType}
-    }
-    );
+      where: { id: createUserDto.userType },
+    });
     let countryId = null;
     let insId = null;
     if (createUserDto.userType == 3) {
       countryId = null;
       insId = createUserDto.institution;
-    }
-    else if (createUserDto.userType == 2) {
+    } else if (createUserDto.userType == 2) {
       countryId = createUserDto.country;
       insId = 0;
       let cou = await this.countryRepo.findOne({
-        where:{
-          id:countryId
-        }
+        where: {
+          id: countryId,
+        },
       });
       cou.isCA = true;
-      this.countryRepo.save(cou)
-    }
-
-    else if (createUserDto.userType == 1) {
+      this.countryRepo.save(cou);
+    } else if (createUserDto.userType == 1) {
       countryId = null;
       insId = createUserDto.institution;
-    }
-
-    else if (createUserDto.userType == 5) {
+    } else if (createUserDto.userType == 5) {
       countryId = null;
       insId = createUserDto.institution;
     }
     let institution = await this.institutionRepository.findOne({
-      where:{id:insId}
-      
-      });
+      where: { id: insId },
+    });
     let country = await this.countryRepo.findOne({
-      where:{
-        id:countryId
-      }
+      where: {
+        id: countryId,
+      },
     });
 
     let newUser = new User();
@@ -94,23 +87,35 @@ export class UsersService extends TypeOrmCrudService<User> {
     let newUUID = uuidv4();
     let newPassword = ('' + newUUID).substr(0, 6);
     createUserDto.password = newPassword;
-    newUser.password = await this.hashPassword(
-      createUserDto.password,
-      newUser.salt,
-    );
+    newUser.password = await this.hashPassword(createUserDto.password, newUser.salt);
     newUser.resetToken = '';
+    newUser.resetTokenExpiration = new Date(Date.now() + 72 * 60 * 60 * 1000);
 
     var newUserDb = await this.usersRepository.save(newUser);
-    console.log(newUserDb)
+    console.log(newUserDb);
     let systemLoginUrl = '';
     if (newUser.userType.id != 2) {
-      let url = process.env.ClientURl + "reset-password"
-      systemLoginUrl = url
+      let url = process.env.ClientURl + 'reset-password';
+      systemLoginUrl = url;
       var template =
-        'Dear ' + newUserDb.firstName+ " " + newUser.lastName +','+
-        '<br/> <br/>Your username is : ' + newUser.email +
-        ' <br/> your login code is : ' + newPassword +
-        '<br/> <br/>To log in to the system, please visit the following URL :' + ' <a href="' + systemLoginUrl + '">' + " Reset password" + '</a>.' +
+        'Dear ' +
+        newUserDb.firstName +
+        ' ' +
+        newUser.lastName +
+        ',' +
+        '<br/><br/>Welcome! Your account has been created.' +
+        '<br/><br/>Your username is: ' +
+        newUser.email +
+        '<br/>Your activation code is: <strong>' +
+        newPassword +
+        '</strong>' +
+        '<br/><br/><strong>Important:</strong> This activation code is valid for 72 hours. Please activate your account within this time.' +
+        '<br/><br/>To set your password and activate your account, please visit the following URL:' +
+        ' <a href="' +
+        systemLoginUrl +
+        '">' +
+        ' Reset password' +
+        '</a>.' +
         '<br/>' +
         '<br/>Best regards,' +
         '<br/>Software support team';
@@ -122,14 +127,11 @@ export class UsersService extends TypeOrmCrudService<User> {
       );
     }
 
-
-
     newUserDb.password = '';
     newUserDb.salt = '';
 
     return newUserDb;
   }
-
 
   async chnageStatus(userId: number, status: number): Promise<User> {
     let user = await this.usersRepository.findOne({ where: { id: userId } });
@@ -143,41 +145,21 @@ export class UsersService extends TypeOrmCrudService<User> {
     return this.usersRepository.save(user);
   }
 
-  async updateChnagePasswordToken(
+  async updateChangePasswordToken(
     userId: number,
-    newToken: string,
+    resetToken: string,
+    tokenExpiration: Date,
   ): Promise<User> {
-    let url = process.env.ClientURl + "login"
-    let systemLoginUrl = url
-    let user = await this.usersRepository.findOne({ where: { id: userId } });
-    user.resetToken = newToken;
-    let newUUID = uuidv4();
-    let newPassword = ('' + newUUID).substr(0, 6);
-    user.password = await this.hashPassword(
-      user.password,
-      user.salt,
-    );
-    user.password = newPassword;
-    this.usersRepository.save(user);
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
 
-    var template =
-      'Dear ' + user.firstName + " " + user.lastName + ","+
-      '<br/><br/>Your username is :' + user.email +
-      '<br/> your login password is : ' + newPassword +
+    if (!user) {
+      throw new Error('User not found');
+    }
 
-        ' <br/><br/>To log in to the system, please visit the following URL : ' + '<a href="' +systemLoginUrl+'">' + "System login" +'</a>' +'.'
-      +'<br/>' +
-        '<br/>Best regards,' +
-        '<br/>Software support team';
+    user.resetToken = resetToken;
+    user.resetTokenExpiration = tokenExpiration;
 
-    this.emaiService.sendMail(
-      user.email,
-      'Your credentials for TC toolkit',
-      '',
-      template,
-    );
-
-    return this.usersRepository.save(user);
+    return await this.usersRepository.save(user);
   }
 
   async findAll(): Promise<User[]> {
@@ -190,19 +172,14 @@ export class UsersService extends TypeOrmCrudService<User> {
 
   async validateUser(userName: string, password: string): Promise<boolean> {
     const user = await this.usersRepository.findOne({ where: { username: userName } });
-
-
     return (await user).validatePassword(password);
   }
-
 
   async isUserAvailable(userName: string): Promise<any> {
     let user = await this.usersRepository.findOne({ where: { username: userName } });
     if (user) {
-
       return user;
     } else {
-
       return user;
     }
   }
@@ -212,7 +189,6 @@ export class UsersService extends TypeOrmCrudService<User> {
       .findOne({ where: { username: userName } })
       .then((value) => {
         if (!!value) {
-
           return value;
         } else {
           return 0;
@@ -234,70 +210,61 @@ export class UsersService extends TypeOrmCrudService<User> {
   async validateResetPasswordRequest(
     email: string,
     token: string,
-  ): Promise<boolean> {
+  ): Promise<{ valid: boolean; expired?: boolean; message?: string }> {
     const user = await this.usersRepository.findOne({ where: { email: email } });
 
-    if (user && user.resetToken === token) {
-
-      return true;
-    } else {
-
-      return false;
-    }
-  }
-
-  async updateChangePasswordToken(
-    userId: number,
-    resetToken: string,
-    tokenExpiration: Date,
-  ): Promise<User> {
-    const user = await this.usersRepository.findOne({ where: { id: userId } });
-    
     if (!user) {
-      throw new Error('User not found');
+      return { valid: false, message: 'User not found' };
     }
 
-    user.resetToken = resetToken;
-    user.resetTokenExpiration = tokenExpiration;
+    if (user.resetToken !== token) {
+      return { valid: false, message: 'Invalid token' };
+    }
 
-    return await this.usersRepository.save(user);
+    if (user.resetTokenExpiration && new Date() > user.resetTokenExpiration) {
+      return { valid: false, expired: true, message: 'Token has expired. Please request a new password reset.' };
+    }
+
+    return { valid: true };
   }
 
-
-  async resetPassword(dto: ResetPassword): Promise<boolean> {
-    let systemLoginUrl;
+  async resetPassword(dto: ResetPassword): Promise<{ success: boolean; expired?: boolean; message?: string }> {
     const user = await this.usersRepository.findOne({ where: { email: dto.email } });
 
-    if (!user || user.resetToken !== dto.token || new Date() > user.resetTokenExpiration) {
-      throw new Error('Invalid or expired token');
+    if (!user) {
+      return { success: false, message: 'User not found' };
     }
-  
+
+    if (user.resetTokenExpiration && new Date() > user.resetTokenExpiration) {
+      return { success: false, expired: true, message: 'Your activation code has expired. Please request a new password reset.' };
+    }
+
+    if (dto.token && user.resetToken !== dto.token) {
+      return { success: false, message: 'Invalid token' };
+    }
+
     user.password = await bcrypt.hash(dto.password, user.salt);
     user.resetToken = null;
     user.resetTokenExpiration = null;
     await this.usersRepository.save(user);
-  
+
     const url = user.userType && user.userType.id === 2 ? process.env.COUNTRY_LOGIN_URL : process.env.ClientURl;
-    systemLoginUrl = url;
-  
-    const template =
-      `Dear ${user.firstName} ${user.lastName},<br/>
+
+    const template = `Dear ${user.firstName} ${user.lastName},<br/>
       Your username is ${user.email}<br/>
-      Your new login password has been reset.<br/>
-      System login URL: <a href="${systemLoginUrl}">${systemLoginUrl}</a>`;
-  
+      Your password has been reset successfully.<br/>
+      System login URL: <a href="${url}">${url}</a>`;
+
     await this.emaiService.sendMail(user.email, 'Your credentials for TC Toolkit system', '', template);
-  
-    return true;
+
+    return { success: true };
   }
 
   private async hashPassword(password: string, salt: string): Promise<string> {
     return await bcrypt.hash(password, salt);
   }
 
-
   async getUserDetails(
-
     options: IPaginationOptions,
     filterText: string,
     userTypeId: number,
@@ -306,7 +273,7 @@ export class UsersService extends TypeOrmCrudService<User> {
 
     if (filterText != null && filterText != undefined && filterText != '') {
       filter =
-        '(user.firstName LIKE :filterText OR user.lastName LIKE :filterText OR user.telephone LIKE :filterText OR user.email LIKE :filterText OR ins.name LIKE :filterText OR type.name LIKE :filterText)'
+        '(user.firstName LIKE :filterText OR user.lastName LIKE :filterText OR user.telephone LIKE :filterText OR user.email LIKE :filterText OR ins.name LIKE :filterText OR type.name LIKE :filterText)';
     }
 
     if (userTypeId != 0) {
@@ -319,14 +286,14 @@ export class UsersService extends TypeOrmCrudService<User> {
 
     let data = this.repo
       .createQueryBuilder('user')
-      .leftJoinAndMapOne('user.institution', Institution, 'ins', 'ins.id = user.institutionId',)
-      .leftJoinAndMapOne('user.userType', UserType, 'type', 'type.id = user.userTypeId',)
-      .leftJoinAndMapOne('user.country', Country, 'country', 'country.id = user.countryId',)
-
+      .leftJoinAndMapOne('user.institution', Institution, 'ins', 'ins.id = user.institutionId')
+      .leftJoinAndMapOne('user.userType', UserType, 'type', 'type.id = user.userTypeId')
+      .leftJoinAndMapOne('user.country', Country, 'country', 'country.id = user.countryId')
       .where(filter, {
         filterText: `%${filterText}%`,
         userTypeId,
-      }).orderBy('user.status', 'ASC');
+      })
+      .orderBy('user.status', 'ASC');
 
     let result = await paginate(data, options);
 
@@ -339,89 +306,57 @@ export class UsersService extends TypeOrmCrudService<User> {
     let data = await this.repo
       .createQueryBuilder('u')
       .select('*')
-      .where(
-        'u.userTypeId = 2'
-      ).execute();
+      .where('u.userTypeId = 2')
+      .execute();
     return data;
   }
 
   async findByIns(insId: number) {
-    this.repo.createQueryBuilder('user')
-      .leftJoinAndMapOne(
-        'user.institution',
-        Institution,
-        'ins',
-        `user.institutionId= ${insId}`
-      )
+    this.repo.createQueryBuilder('user').leftJoinAndMapOne(
+      'user.institution',
+      Institution,
+      'ins',
+      `user.institutionId= ${insId}`,
+    );
   }
-
 
   async getType(type: string) {
     let filter = [];
-    if (type == "PMU admin" || type == "PMU user") {
+    if (type == 'PMU admin' || type == 'PMU user') {
       let data = await this.usersTypeRepository.find();
       for (let a of data) {
         if (a.id == 2) {
           filter.push(a);
-        }
-        else if (a.id ==3 ) {
+        } else if (a.id == 3) {
           filter.push(a);
         }
       }
       return filter;
-    }
-    else{
+    } else {
       return await this.usersTypeRepository.find();
     }
   }
 
-  async getUserByCountry(  options: IPaginationOptions,type: ReqUserDto) {
-    if(type){
+  async getUserByCountry(options: IPaginationOptions, type: ReqUserDto) {
+    if (type) {
       let filter: string = '';
-      filter = type.andoprator 
-      if(type.oroprator){filter +=  " and "+type.oroprator;}
-      let data =this.repo.createQueryBuilder('user')
-      .leftJoinAndMapOne(
-        'user.userType',
-        UserType,
-        'userType',
-        'userType.id=user.userTypeId'
-      ) 
-       .leftJoinAndMapOne(
-        'user.institution',
-        Institution,
-        'institution',
-        'institution.id=user.institutionId'
-      )
-      .leftJoinAndMapOne(
-        'user.country',
-        Country,
-        'country',
-        'country.id=user.countryId'
-      )
-      .where(filter,{type} );
+      filter = type.andoprator;
+      if (type.oroprator) {
+        filter += ' and ' + type.oroprator;
+      }
+      let data = this.repo
+        .createQueryBuilder('user')
+        .leftJoinAndMapOne('user.userType', UserType, 'userType', 'userType.id=user.userTypeId')
+        .leftJoinAndMapOne('user.institution', Institution, 'institution', 'institution.id=user.institutionId')
+        .leftJoinAndMapOne('user.country', Country, 'country', 'country.id=user.countryId')
+        .where(filter, { type });
       return await paginate(data, options);
-    }
-    else{
-      let data =this.repo.createQueryBuilder('user')
-      .leftJoinAndMapOne(
-        'user.userType',
-        UserType,
-        'userType',
-        'userType.id=user.userTypeId'
-      ) 
-       .leftJoinAndMapOne(
-        'user.institution',
-        Institution,
-        'institution',
-        'institution.id=user.institutionId'
-      )
-      .leftJoinAndMapOne(
-        'user.country',
-        Country,
-        'country',
-        'country.id=user.countryId'
-      )
+    } else {
+      let data = this.repo
+        .createQueryBuilder('user')
+        .leftJoinAndMapOne('user.userType', UserType, 'userType', 'userType.id=user.userTypeId')
+        .leftJoinAndMapOne('user.institution', Institution, 'institution', 'institution.id=user.institutionId')
+        .leftJoinAndMapOne('user.country', Country, 'country', 'country.id=user.countryId');
       return await paginate(data, options);
     }
   }
@@ -429,47 +364,29 @@ export class UsersService extends TypeOrmCrudService<User> {
   async getFilteredUsers(filter: string): Promise<any> {
     let data = this.repo
       .createQueryBuilder('user')
-      .leftJoinAndMapOne(
-        'user.userType',
-        UserType,
-        'userType',
-        'userType.id=user.userTypeId'
-      ) 
-       .leftJoinAndMapOne(
-        'user.institution',
-        Institution,
-        'institution',
-        'institution.id=user.institutionId'
-      )
-      .leftJoinAndMapOne(
-        'user.country',
-        Country,
-        'country',
-        'country.id=user.countryId'
-      )
-      .where(filter,{filter})
+      .leftJoinAndMapOne('user.userType', UserType, 'userType', 'userType.id=user.userTypeId')
+      .leftJoinAndMapOne('user.institution', Institution, 'institution', 'institution.id=user.institutionId')
+      .leftJoinAndMapOne('user.country', Country, 'country', 'country.id=user.countryId')
+      .where(filter, { filter })
       .orderBy('user.id', 'DESC');
-    return await data.getMany()
+    return await data.getMany();
   }
 
   async update(id: number, user: User) {
     try {
-      let us =await this.repo.findOne({where:{id:id}});
+      let us = await this.repo.findOne({ where: { id: id } });
       let co = new Country();
-      co.id= user.country.id
-      us.country =co;
-      us.firstName =user.firstName;
-      us.lastName =user.lastName;
-      us.mobile =user.mobile;
+      co.id = user.country.id;
+      us.country = co;
+      us.firstName = user.firstName;
+      us.lastName = user.lastName;
+      us.mobile = user.mobile;
       us.telephone = user.telephone;
       return await this.repo.update({ id: id }, us);
     } catch (err) {
       throw new InternalServerErrorException(err);
     }
   }
-  async saveOneUser(user:User){
 
-  }
-
+  async saveOneUser(user: User) {}
 }
-
