@@ -7,7 +7,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import * as bcript from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { UserType } from './user.type.entity';
 import { Exclude } from 'class-transformer';
 import { BaseTrackingEntity } from 'src/shared/entities/base.tracking.entity';
@@ -108,11 +108,24 @@ export class User extends BaseTrackingEntity {
   set fullname(value: string) {}
 
   async validatePassword(password: string): Promise<boolean> {
-    const hashPassword = await bcript.hash(password, this.salt);
+    const hashPassword = await bcrypt.hash(password, this.salt);
     return hashPassword === this.password;
   }
 
   async validateResetToken(token: string): Promise<boolean> {
-    return token === this.resetToken;
+    if (token !== this.resetToken) {
+      return false;
+    }
+    if (this.resetTokenExpiration && new Date() > this.resetTokenExpiration) {
+      return false;
+    }
+    return true;
+  }
+
+  isResetTokenExpired(): boolean {
+    if (!this.resetTokenExpiration) {
+      return false;
+    }
+    return new Date() > this.resetTokenExpiration;
   }
 }
