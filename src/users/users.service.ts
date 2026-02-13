@@ -94,39 +94,41 @@ export class UsersService extends TypeOrmCrudService<User> {
     newUser.resetTokenExpiration = new Date(Date.now() + 72 * 60 * 60 * 1000);
 
     var newUserDb = await this.usersRepository.save(newUser);
-    if (newUser.userType.id != 2) {
-      const activationUrl = `${process.env.ClientURl}reset-password?token=${activationToken}&email=${encodeURIComponent(newUser.email)}&activate=true`;
 
-      const template = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-          <p>Dear ${newUserDb.firstName} ${newUser.lastName},</p>
-          <p>Welcome to the <strong>TC Toolkit</strong>! Your account has been created successfully.</p>
-          <p>To get started, please set your password by clicking the button below:</p>
-          <p style="text-align: center; margin: 30px 0;">
-            <a href="${activationUrl}"
-               style="background-color: #0d6efd; color: #ffffff; padding: 12px 30px; text-decoration: none; border-radius: 4px; font-weight: bold;">
-              Activate Your Account
-            </a>
-          </p>
-          <p>If the button above does not work, copy and paste the following link into your browser:</p>
-          <p style="word-break: break-all; font-size: 13px; color: #666;">${activationUrl}</p>
-          <p><strong>Note:</strong> This link will expire in 72 hours.</p>
-          <p>If you did not request this account, please ignore this email.</p>
-          <br/>
-          <p>Best regards,<br/><strong>ICAT TC Toolkit Team</strong><br/>United Nations Office for Project Services (UNOPS)</p>
-        </div>
-      `;
+    const baseUrl = newUser.userType.id === 2
+      ? process.env.LOGIN_URL_COUNTRY?.replace('/login', '/')
+      : process.env.ClientURl;
+    const activationUrl = `${baseUrl}reset-password?token=${activationToken}&email=${encodeURIComponent(newUser.email)}&activate=true`;
 
-      try {
-        await this.emaiService.sendMail(
-          newUserDb.email,
-          'Activate Your TC Toolkit Account',
-          '',
-          template,
-        );
-      } catch (e) {
-        console.error(`Failed to send activation email to ${newUserDb.email}:`, e.message || e);
-      }
+    const template = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+        <p>Dear ${newUserDb.firstName} ${newUser.lastName},</p>
+        <p>Welcome to the <strong>TC Toolkit</strong>! Your account has been created successfully.</p>
+        <p>To get started, please set your password by clicking the button below:</p>
+        <p style="text-align: center; margin: 30px 0;">
+          <a href="${activationUrl}"
+             style="background-color: #0d6efd; color: #ffffff; padding: 12px 30px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+            Activate Your Account
+          </a>
+        </p>
+        <p>If the button above does not work, copy and paste the following link into your browser:</p>
+        <p style="word-break: break-all; font-size: 13px; color: #666;">${activationUrl}</p>
+        <p><strong>Note:</strong> This link will expire in 72 hours.</p>
+        <p>If you did not request this account, please ignore this email.</p>
+        <br/>
+        <p>Best regards,<br/><strong>ICAT TC Toolkit Team</strong><br/>United Nations Office for Project Services (UNOPS)</p>
+      </div>
+    `;
+
+    try {
+      await this.emaiService.sendMail(
+        newUserDb.email,
+        'Activate Your TC Toolkit Account',
+        '',
+        template,
+      );
+    } catch (e) {
+      console.error(`Failed to send activation email to ${newUserDb.email}:`, e.message || e);
     }
 
     newUserDb.password = '';
