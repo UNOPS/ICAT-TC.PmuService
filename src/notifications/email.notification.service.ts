@@ -13,19 +13,18 @@ export class EmailNotificationService {
     text: string,
     emailTemplate: string = '',
   ) {
-    try {
-      await this.mailerService.sendMail({
-        to,
-        from: this.from,
-        subject,
-        text,
-        html: emailTemplate,
+    this.mailerService
+      .sendMail({
+        to: to, //user.email, // list of receivers
+        from: this.from, // sender address
+        subject: subject, // Subject line
+        text: text, // plaintext body
+        html: emailTemplate, // HTML body content
+      })
+      .then((res) => {;
+      })
+      .catch((e) => {
       });
-      console.log(`Email sent successfully to ${to}: ${subject}`);
-    } catch (e) {
-      console.error(`Failed to send email to ${to}: ${subject}`, e.message || e);
-      throw e;
-    }
   }
 
 }

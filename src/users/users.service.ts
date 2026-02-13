@@ -88,47 +88,43 @@ export class UsersService extends TypeOrmCrudService<User> {
     let newPassword = ('' + newUUID).substr(0, 6);
     createUserDto.password = newPassword;
     newUser.password = await this.hashPassword(createUserDto.password, newUser.salt);
-
-    const activationToken = uuidv4();
-    newUser.resetToken = activationToken;
+    newUser.resetToken = '';
     newUser.resetTokenExpiration = new Date(Date.now() + 72 * 60 * 60 * 1000);
 
     var newUserDb = await this.usersRepository.save(newUser);
-
-    const baseUrl = newUser.userType.id === 2
-      ? process.env.LOGIN_URL_COUNTRY?.replace('/login', '/')
-      : process.env.ClientURl;
-    const activationUrl = `${baseUrl}reset-password?token=${activationToken}&email=${encodeURIComponent(newUser.email)}&activate=true`;
-
-    const template = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-        <p>Dear ${newUserDb.firstName} ${newUser.lastName},</p>
-        <p>Welcome to the <strong>TC Toolkit</strong>! Your account has been created successfully.</p>
-        <p>To get started, please set your password by clicking the button below:</p>
-        <p style="text-align: center; margin: 30px 0;">
-          <a href="${activationUrl}"
-             style="background-color: #0d6efd; color: #ffffff; padding: 12px 30px; text-decoration: none; border-radius: 4px; font-weight: bold;">
-            Activate Your Account
-          </a>
-        </p>
-        <p>If the button above does not work, copy and paste the following link into your browser:</p>
-        <p style="word-break: break-all; font-size: 13px; color: #666;">${activationUrl}</p>
-        <p><strong>Note:</strong> This link will expire in 72 hours.</p>
-        <p>If you did not request this account, please ignore this email.</p>
-        <br/>
-        <p>Best regards,<br/><strong>ICAT TC Toolkit Team</strong><br/>United Nations Office for Project Services (UNOPS)</p>
-      </div>
-    `;
-
-    try {
-      await this.emaiService.sendMail(
+    console.log(newUserDb);
+    let systemLoginUrl = '';
+    if (newUser.userType.id != 2) {
+      let url = process.env.ClientURl + 'reset-password';
+      systemLoginUrl = url;
+      var template =
+        'Dear ' +
+        newUserDb.firstName +
+        ' ' +
+        newUser.lastName +
+        ',' +
+        '<br/><br/>Welcome! Your account has been created.' +
+        '<br/><br/>Your username is: ' +
+        newUser.email +
+        '<br/>Your activation code is: <strong>' +
+        newPassword +
+        '</strong>' +
+        '<br/><br/><strong>Important:</strong> This activation code is valid for 72 hours. Please activate your account within this time.' +
+        '<br/><br/>To set your password and activate your account, please visit the following URL:' +
+        ' <a href="' +
+        systemLoginUrl +
+        '">' +
+        ' Reset password' +
+        '</a>.' +
+        '<br/>' +
+        '<br/>Best regards,' +
+        '<br/>Software support team';
+      this.emaiService.sendMail(
         newUserDb.email,
-        'Activate Your TC Toolkit Account',
+        'Your credentials for TC toolkit',
         '',
         template,
       );
-    } catch (e) {
-      console.error(`Failed to send activation email to ${newUserDb.email}:`, e.message || e);
     }
 
     newUserDb.password = '';
@@ -252,30 +248,14 @@ export class UsersService extends TypeOrmCrudService<User> {
     user.resetTokenExpiration = null;
     await this.usersRepository.save(user);
 
-    const loginUrl = user.userType && user.userType.id === 2 ? process.env.LOGIN_URL_COUNTRY : process.env.ClientURl;
+    const url = user.userType && user.userType.id === 2 ? process.env.COUNTRY_LOGIN_URL : process.env.ClientURl;
 
-    const template = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-        <p>Dear ${user.firstName} ${user.lastName},</p>
-        <p>Your password for the <strong>TC Toolkit</strong> has been updated successfully.</p>
-        <p>You can now log in using your email address: <strong>${user.email}</strong></p>
-        <p style="text-align: center; margin: 30px 0;">
-          <a href="${loginUrl}"
-             style="background-color: #0d6efd; color: #ffffff; padding: 12px 30px; text-decoration: none; border-radius: 4px; font-weight: bold;">
-            Log In
-          </a>
-        </p>
-        <p>If you did not make this change, please contact the support team immediately.</p>
-        <br/>
-        <p>Best regards,<br/><strong>ICAT TC Toolkit Team</strong><br/>United Nations Office for Project Services (UNOPS)</p>
-      </div>
-    `;
+    const template = `Dear ${user.firstName} ${user.lastName},<br/>
+      Your username is ${user.email}<br/>
+      Your password has been reset successfully.<br/>
+      System login URL: <a href="${url}">${url}</a>`;
 
-    try {
-      await this.emaiService.sendMail(user.email, 'TC Toolkit - Password Updated', '', template);
-    } catch (e) {
-      console.error(`Failed to send password update confirmation to ${user.email}:`, e.message || e);
-    }
+    await this.emaiService.sendMail(user.email, 'Your credentials for TC Toolkit system', '', template);
 
     return { success: true };
   }
