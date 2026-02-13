@@ -131,19 +131,31 @@ export class AuthController {
     tokenExpiration.setHours(tokenExpiration.getHours() + 72);
 
     await this.usersService.updateChangePasswordToken(user.id, pwdResetToken, tokenExpiration);
-    const resetPwdUrl = `${process.env.CLIENT_URL}/reset-password?token=${pwdResetToken}`;
+    const resetPwdUrl = `${process.env.ClientURl}reset-password?token=${pwdResetToken}&email=${encodeURIComponent(user.email)}`;
 
     const emailTemplate = `
-      Dear ${user.firstName},<br/><br/>
-      We received a request to reset your password.<br/>
-      Please <a href="${resetPwdUrl}">click here</a> to reset your password.<br/>
-      <strong>Important:</strong> This link will expire in 72 hours.<br/><br/>
-      If you did not request this, please ignore this email.
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+        <p>Dear ${user.firstName} ${user.lastName},</p>
+        <p>We received a request to reset the password for your <strong>TC Toolkit</strong> account.</p>
+        <p>Please click the button below to set a new password:</p>
+        <p style="text-align: center; margin: 30px 0;">
+          <a href="${resetPwdUrl}"
+             style="background-color: #0d6efd; color: #ffffff; padding: 12px 30px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+            Reset Password
+          </a>
+        </p>
+        <p>If the button above does not work, copy and paste the following link into your browser:</p>
+        <p style="word-break: break-all; font-size: 13px; color: #666;">${resetPwdUrl}</p>
+        <p><strong>Note:</strong> This link will expire in 72 hours.</p>
+        <p>If you did not request this change, please ignore this email. Your password will remain unchanged.</p>
+        <br/>
+        <p>Best regards,<br/><strong>ICAT TC Toolkit Team</strong><br/>United Nations Office for Project Services (UNOPS)</p>
+      </div>
     `;
 
     await this.emailService.sendMail(
       user.email,
-      'Password Reset Request',
+      'TC Toolkit - Password Reset Request',
       '',
       emailTemplate,
     );
