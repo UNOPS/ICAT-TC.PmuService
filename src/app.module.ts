@@ -112,9 +112,14 @@ import { IndicatorModule } from './master-data/indicator/indicator.module';
     
     MailerModule.forRoot({
       transport:{
-        host: process.env.EMAIL_HOST, 
-        port:587,
-       secure: false,
+        host: process.env.EMAIL_HOST,
+        name: 'unops.org',
+        pool: true,
+        port: 587,
+        secure: false,
+        tls: {
+          rejectUnauthorized: false,
+        },
       },
       defaults: {
         from: process.env.EMAIL,
