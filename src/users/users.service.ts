@@ -117,12 +117,16 @@ export class UsersService extends TypeOrmCrudService<User> {
         </div>
       `;
 
-      this.emaiService.sendMail(
-        newUserDb.email,
-        'Activate Your TC Toolkit Account',
-        '',
-        template,
-      );
+      try {
+        await this.emaiService.sendMail(
+          newUserDb.email,
+          'Activate Your TC Toolkit Account',
+          '',
+          template,
+        );
+      } catch (e) {
+        console.error(`Failed to send activation email to ${newUserDb.email}:`, e.message || e);
+      }
     }
 
     newUserDb.password = '';
