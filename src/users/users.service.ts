@@ -269,7 +269,11 @@ export class UsersService extends TypeOrmCrudService<User> {
       </div>
     `;
 
-    await this.emaiService.sendMail(user.email, 'TC Toolkit - Password Updated', '', template);
+    try {
+      await this.emaiService.sendMail(user.email, 'TC Toolkit - Password Updated', '', template);
+    } catch (e) {
+      console.error(`Failed to send password update confirmation to ${user.email}:`, e.message || e);
+    }
 
     return { success: true };
   }
