@@ -3,7 +3,6 @@ import { AppService } from './app.service';
 import { Public } from './auth/decorators/public.decorator';
 import { ProductionDisabledGuard } from './auth/guards/production-disabled.guard';
 import { UseGuards } from '@nestjs/common';
-import { SkipThrottle } from '@nestjs/throttler';
 import { exec } from 'child_process';
 
 @Controller()
@@ -11,7 +10,6 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Public()
-  @SkipThrottle()
   @Get()
   getHello(): string {
     return this.appService.getHello();
