@@ -1,19 +1,25 @@
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import 'dotenv/config';
+
 import { AppModule } from './app.module';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import 'dotenv/config'
+import { getCorsOptions } from './config/cors.config';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const options = new DocumentBuilder()
-    .setTitle('ICAT')
-    .setDescription('ICAT')
-    .setVersion('1.0')
-    .addTag('ICAT')
-    .addCookieAuth('optional-session-id')
-    .build();
-  const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('api', app, document);
-  app.enableCors();
+  app.enableCors(getCorsOptions());
+
+  if (process.env.NODE_ENV !== 'production') {
+    const options = new DocumentBuilder()
+      .setTitle('ICAT PMU Service')
+      .setDescription('ICAT PMU API')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .build();
+    const document = SwaggerModule.createDocument(app, options);
+    SwaggerModule.setup('api', app, document);
+  }
+
   await app.listen(parseInt(process.env.PORT));
 }
 bootstrap();

@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Param, Put, Res } from '@nestjs/common';
 import { Post } from '@nestjs/common';
+import { Public } from './decorators/public.decorator';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
@@ -29,6 +30,7 @@ export class AuthController {
 
   audit2: any;
 
+  @Public()
   @Post('auth/login')
   async login(@Body() authCredentialDto: AuthCredentialDto): Promise<any> {
     this.username = authCredentialDto.username;
@@ -49,6 +51,7 @@ export class AuthController {
     return await this.authService.login(authCredentialDto);
   }
 
+  @Public()
   @Get('auth/validate-reset-password/:email/:token')
   async validateResetPassword(
     @Param('email') email: string,
@@ -74,6 +77,7 @@ export class AuthController {
     });
   }
 
+  @Public()
   @Put('auth/reset-password')
   async resetPassword(
     @Body() resetPwd: ResetPassword,
@@ -112,6 +116,7 @@ export class AuthController {
     });
   }
 
+  @Public()
   @Post('auth/forgot-password')
   async forgotPassword(
     @Body() forgotparam: ForgotPasswordDto,

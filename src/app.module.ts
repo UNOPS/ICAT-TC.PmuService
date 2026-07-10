@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -52,6 +53,7 @@ import { MethodologyDataModule } from './master-data/methodology-data/methodolog
 import { MethodologyDataController } from './master-data/methodology-data/methodology-data.controller';
 import { IndicatorController } from './indicator/indicator.controller';
 import { IndicatorModule } from './master-data/indicator/indicator.module';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 
 
 @Module({
@@ -155,6 +157,6 @@ import { IndicatorModule } from './master-data/indicator/indicator.module';
 
     IndicatorController,
   ],
-  providers: [AppService],
+  providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }, AppService],
 })
 export class AppModule {}
