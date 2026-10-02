@@ -138,7 +138,7 @@ export class UsersService extends TypeOrmCrudService<User> {
     return newUserDb;
   }
 
-  async syncToTc(user: User): Promise<'ok' | 'failed'> {
+  async syncToTc(user: User): Promise<TcSyncResult> {
     const authUrl = process.env.AUTH_SERVICE_URL;
     if (!authUrl) {
       console.error('AUTH_SERVICE_URL is not set; cannot sync Country Admin to the TC toolkit');
@@ -154,7 +154,8 @@ export class UsersService extends TypeOrmCrudService<User> {
         console.error(`TC sync failed for ${user.email}: HTTP ${res.status}`);
         return 'failed';
       }
-      return 'ok';
+      const body = await res.json().catch(() => null);
+      return body?.status === 'created' ? 'created' : 'ok';
     } catch (err) {
       console.error(`TC sync failed for ${user.email}: ${err?.message ?? err}`);
       return 'failed';
@@ -163,14 +164,41 @@ export class UsersService extends TypeOrmCrudService<User> {
 
   async chnageStatus(userId: number, status: number): Promise<User> {
     let user = await this.usersRepository.findOne({ where: { id: userId } });
+    const previousStatus = user.status;
     user.status = status;
     const saved = await this.usersRepository.save(user);
+    let tcSync: TcSyncResult | undefined;
     if (saved.userType?.id === 2) {
-      (saved as any).tcSync = await this.syncToTc(saved);
+      tcSync = await this.syncToTc(saved);
+      (saved as any).tcSync = tcSync;
+    }
+    if (previousStatus !== status && tcSync !== 'created') {
+      this.sendStatusChangeEmail(saved);
     }
     saved.password = '';
     saved.salt = '';
     return saved;
+  }
+
+  private sendStatusChangeEmail(user: User) {
+    const deactivated = user.status !== RecordStatus.Active;
+    const url = user.userType?.id === 2 ? process.env.COUNTRY_LOGIN_URL : process.env.ClientURl;
+    const body = deactivated
+      ? 'Your TC toolkit account (' + user.email + ') has been deactivated by an administrator. You can no longer log in.' +
+      '<br/><br/>If you think this is a mistake, please contact your PMU administrator.'
+      : 'Your TC toolkit account (' + user.email + ') has been reactivated. You can log in again with your existing password.' +
+      (url ? '<br/><br/>System login URL: <a href="' + url + '">' + url + '</a>' : '');
+    const template =
+      'Dear ' + user.firstName + ' ' + user.lastName + ',' +
+      '<br/><br/>' + body +
+      '<br/><br/>Best regards,' +
+      '<br/>Software support team';
+    this.emaiService.sendMail(
+      user.email,
+      deactivated ? 'Your TC toolkit account has been deactivated' : 'Your TC toolkit account has been reactivated',
+      '',
+      template,
+    );
   }
 
   async chnagePassword(userId: number, newPassword: string): Promise<User> {
@@ -439,6 +467,8 @@ export class UsersService extends TypeOrmCrudService<User> {
     return true;
   }
 }
+
+type TcSyncResult = 'ok' | 'created' | 'failed';
 
 function notDeleted(filter: string): string {
   const cond = `user.status != ${RecordStatus.Deleted}`;

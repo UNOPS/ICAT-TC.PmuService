@@ -24,6 +24,7 @@ export class EmailNotificationService {
       .then((res) => {;
       })
       .catch((e) => {
+        console.error(`Failed to send email to ${to} ("${subject}"): ${e?.message ?? e}`);
       });
   }
 
