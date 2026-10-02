@@ -165,14 +165,14 @@ export class UsersService extends TypeOrmCrudService<User> {
   async chnageStatus(userId: number, status: number): Promise<User> {
     let user = await this.usersRepository.findOne({ where: { id: userId } });
     const previousStatus = user.status;
-    user.status = status;
+    user.status = Number(status);
     const saved = await this.usersRepository.save(user);
     let tcSync: TcSyncResult | undefined;
     if (saved.userType?.id === 2) {
       tcSync = await this.syncToTc(saved);
       (saved as any).tcSync = tcSync;
     }
-    if (previousStatus !== status && tcSync !== 'created') {
+    if (previousStatus !== saved.status && tcSync !== 'created') {
       this.sendStatusChangeEmail(saved);
     }
     saved.password = '';
