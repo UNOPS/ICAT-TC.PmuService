@@ -1,4 +1,5 @@
-import { Injectable, } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { RecordStatus } from 'src/shared/entities/base.tracking.entity';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthCredentialDto } from './Dto/auth.credential.dto';
@@ -29,6 +30,10 @@ export class  AuthService {
 
     if(await this.usersService.validateUser(username, password)){
       const selectedUser= await  this.usersService.findByUserName(username);
+      // status 1 = deactivated in the PMU UI; anything but Active must not get a token
+      if (selectedUser.status !== RecordStatus.Active) {
+        throw new ForbiddenException('This account has been deactivated');
+      }
       
       
       const payload = {usr: (await selectedUser).username, 

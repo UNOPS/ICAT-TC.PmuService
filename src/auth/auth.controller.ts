@@ -43,9 +43,9 @@ export class AuthController {
       description: authCredentialDto.username + ' Is Logged',
       userName: authCredentialDto.username,
       actionStatus: 'Logged',
-      userType: user.userType.name,
-      uuId: user.userType.id,
-      institutionId: user.institution.id,
+      userType: user?.userType?.name,
+      uuId: user?.userType?.id,
+      institutionId: user?.institution?.id,
     };
 
     return await this.authService.login(authCredentialDto);
