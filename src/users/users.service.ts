@@ -9,6 +9,7 @@ import { UserType } from './user.type.entity';
 import { ConfigService } from '@nestjs/config';
 import { Institution } from 'src/institution/institution.entity';
 import { RecordStatus } from 'src/shared/entities/base.tracking.entity';
+import { getServiceAuthHeaders } from 'src/auth/utils/api-key.util';
 import { EmailNotificationService } from 'src/notifications/email.notification.service';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { Country } from 'src/country/entity/country.entity';
@@ -130,13 +131,46 @@ export class UsersService extends TypeOrmCrudService<User> {
     newUserDb.password = '';
     newUserDb.salt = '';
 
+    if (newUserDb.userType?.id === 2) {
+      (newUserDb as any).tcSync = await this.syncToTc(newUserDb);
+    }
+
     return newUserDb;
+  }
+
+  async syncToTc(user: User): Promise<'ok' | 'failed'> {
+    const authUrl = process.env.AUTH_SERVICE_URL;
+    if (!authUrl) {
+      console.error('AUTH_SERVICE_URL is not set; cannot sync Country Admin to the TC toolkit');
+      return 'failed';
+    }
+    try {
+      const res = await fetch(authUrl + '/login-profile/syncuser', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...getServiceAuthHeaders() },
+        body: JSON.stringify({ ...user, password: undefined, salt: undefined, resetToken: undefined }),
+      });
+      if (!res.ok) {
+        console.error(`TC sync failed for ${user.email}: HTTP ${res.status}`);
+        return 'failed';
+      }
+      return 'ok';
+    } catch (err) {
+      console.error(`TC sync failed for ${user.email}: ${err?.message ?? err}`);
+      return 'failed';
+    }
   }
 
   async chnageStatus(userId: number, status: number): Promise<User> {
     let user = await this.usersRepository.findOne({ where: { id: userId } });
     user.status = status;
-    return this.usersRepository.save(user);
+    const saved = await this.usersRepository.save(user);
+    if (saved.userType?.id === 2) {
+      (saved as any).tcSync = await this.syncToTc(saved);
+    }
+    saved.password = '';
+    saved.salt = '';
+    return saved;
   }
 
   async chnagePassword(userId: number, newPassword: string): Promise<User> {
@@ -289,7 +323,7 @@ export class UsersService extends TypeOrmCrudService<User> {
       .leftJoinAndMapOne('user.institution', Institution, 'ins', 'ins.id = user.institutionId')
       .leftJoinAndMapOne('user.userType', UserType, 'type', 'type.id = user.userTypeId')
       .leftJoinAndMapOne('user.country', Country, 'country', 'country.id = user.countryId')
-      .where(filter, {
+      .where(notDeleted(filter), {
         filterText: `%${filterText}%`,
         userTypeId,
       })
@@ -349,14 +383,15 @@ export class UsersService extends TypeOrmCrudService<User> {
         .leftJoinAndMapOne('user.userType', UserType, 'userType', 'userType.id=user.userTypeId')
         .leftJoinAndMapOne('user.institution', Institution, 'institution', 'institution.id=user.institutionId')
         .leftJoinAndMapOne('user.country', Country, 'country', 'country.id=user.countryId')
-        .where(filter, { type });
+        .where(notDeleted(filter), { type });
       return await paginate(data, options);
     } else {
       let data = this.repo
         .createQueryBuilder('user')
         .leftJoinAndMapOne('user.userType', UserType, 'userType', 'userType.id=user.userTypeId')
         .leftJoinAndMapOne('user.institution', Institution, 'institution', 'institution.id=user.institutionId')
-        .leftJoinAndMapOne('user.country', Country, 'country', 'country.id=user.countryId');
+        .leftJoinAndMapOne('user.country', Country, 'country', 'country.id=user.countryId')
+        .where(notDeleted(''));
       return await paginate(data, options);
     }
   }
@@ -367,7 +402,7 @@ export class UsersService extends TypeOrmCrudService<User> {
       .leftJoinAndMapOne('user.userType', UserType, 'userType', 'userType.id=user.userTypeId')
       .leftJoinAndMapOne('user.institution', Institution, 'institution', 'institution.id=user.institutionId')
       .leftJoinAndMapOne('user.country', Country, 'country', 'country.id=user.countryId')
-      .where(filter, { filter })
+      .where(notDeleted(filter), { filter })
       .orderBy('user.id', 'DESC');
     return await data.getMany();
   }
@@ -388,5 +423,24 @@ export class UsersService extends TypeOrmCrudService<User> {
     }
   }
 
-  async saveOneUser(user: User) {}
+  async saveOneUser(user: User) { }
+
+  async removeSynced(uniqueIdentification: string): Promise<boolean> {
+    const user = await this.repo.findOne({ where: { uniqueIdentification: uniqueIdentification } });
+    if (!user || user.status === RecordStatus.Deleted) {
+      return false;
+    }
+    const tombstone = `deleted-${user.id}-${Date.now()}:`;
+    await this.repo.update(user.id, {
+      status: RecordStatus.Deleted,
+      email: tombstone + user.email,
+      username: tombstone + user.username,
+    });
+    return true;
+  }
+}
+
+function notDeleted(filter: string): string {
+  const cond = `user.status != ${RecordStatus.Deleted}`;
+  return filter ? `(${filter}) AND ${cond}` : cond;
 }

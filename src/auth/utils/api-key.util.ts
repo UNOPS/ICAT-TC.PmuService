@@ -15,3 +15,12 @@ export function isValidApiKey(request: {
   const keys = getConfiguredApiKeys();
   return keys.length > 0 && keys.includes(header);
 }
+
+export function getServiceAuthHeaders(): Record<string, string> {
+  const apiKey = process.env.API_KEY_1;
+  if (!apiKey) {
+    return {};
+  }
+
+  return { 'api-key': apiKey };
+}

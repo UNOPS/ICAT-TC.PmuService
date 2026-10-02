@@ -23,6 +23,8 @@ import {
 import { AuditService } from 'src/audit/audit.service';
 import { AuditDto } from 'src/audit/dto/audit-dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { ServiceAuth } from 'src/auth/decorators/service-auth.decorator';
+import { ServiceOnlyGuard } from 'src/auth/guards/service-only.guard';
 import { Institution } from 'src/institution/institution.entity';
 import { Repository } from 'typeorm';
 
@@ -102,6 +104,13 @@ export class UsersController implements CrudController<User> {
     return await this.service.findUserByUserName(userName);
   }
 
+  @ServiceAuth()
+  @UseGuards(ServiceOnlyGuard)
+  @Post('service-remove')
+  async serviceRemove(@Body() body: { uniqueIdentification: string }) {
+    return { removed: await this.service.removeSynced(body.uniqueIdentification) };
+  }
+
   @Delete(':id')
   remove(@Param('id') id: number): Promise<void> {
     return this.service.remove(id);
@@ -143,16 +152,16 @@ export class UsersController implements CrudController<User> {
   }
 
   @Get('user-type/:type')
-  async getUserType(@Query('type') type: string) :Promise<any>{
+  async getUserType(@Query('type') type: string): Promise<any> {
     return await this.service.getType(type);
   }
   @Post('user-country')
-  async getUserByCountry(@Body() type: ReqUserDto) :Promise<any>{
+  async getUserByCountry(@Body() type: ReqUserDto): Promise<any> {
     return await this.service.getUserByCountry(
       {
         limit: type.row,
         page: type.first,
-      },type);
+      }, type);
   }
 
   @Get('filtered-users/:filter')
@@ -163,7 +172,7 @@ export class UsersController implements CrudController<User> {
   }
   @Patch('update-one-user/:id')
   async updateOneUser(@Param('id') id: number, @Body() user: User) {
-   
+
     return await this.service.update(id, user);
   }
 
